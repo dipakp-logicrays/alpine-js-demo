@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-if Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        .warning { background: #fff3cd; padding: 15px; margin: 10px 0; border-left: 4px solid #ffc107; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .box { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-if Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-if?</strong>
+        <p>x-if conditionally adds/removes elements from the DOM entirely. Unlike x-show (which toggles visibility), x-if completely removes the element when false. Must be used on &lt;template&gt; tag.</p>
+    </div>
+
+    <div class="warning">
+        <strong>Important:</strong> x-if must be on a &lt;template&gt; tag, not a regular element. Use x-show for regular elements.
+    </div>
+
+    <h2>Example 1: Basic Conditional Rendering</h2>
+    <div class="demo" x-data="{ show: true }">
+        <button @click="show = !show">Toggle</button>
+
+        <template x-if="show">
+            <div class="box">
+                <p>This element is added/removed from the DOM (not just hidden)</p>
+                <p>Check the DOM inspector - it's completely gone when false!</p>
+            </div>
+        </template>
+
+        <p>Current state: <span x-text="show ? 'Visible' : 'Removed from DOM'"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> When show is false, the element doesn't exist in the DOM at all. It's not just hidden like with x-show.
+    </div>
+
+    <h2>Example 2: x-if vs x-show Performance</h2>
+    <div class="demo" x-data="{ showIf: true, showShow: true }">
+        <div style="display: flex; gap: 20px;">
+            <div style="flex: 1;">
+                <h4>Using x-if</h4>
+                <button @click="showIf = !showIf">Toggle x-if</button>
+                <template x-if="showIf">
+                    <div class="box">
+                        <p>x-if: Element removed from DOM</p>
+                        <p>Best for: Content that toggles infrequently</p>
+                        <p>Trade-off: Slower toggle, smaller DOM</p>
+                    </div>
+                </template>
+            </div>
+
+            <div style="flex: 1;">
+                <h4>Using x-show</h4>
+                <button @click="showShow = !showShow">Toggle x-show</button>
+                <div x-show="showShow" class="box">
+                    <p>x-show: Element hidden with CSS</p>
+                    <p>Best for: Content that toggles frequently</p>
+                    <p>Trade-off: Faster toggle, larger DOM</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-if (DOM removal) vs x-show (CSS display). x-if is better for rarely toggled content, x-show for frequent toggling.
+    </div>
+
+    <h2>Example 3: Multiple Conditions</h2>
+    <div class="demo" x-data="{ userType: 'guest' }">
+        <select x-model="userType">
+            <option value="guest">Guest</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+            <option value="moderator">Moderator</option>
+        </select>
+
+        <template x-if="userType === 'guest'">
+            <div class="box" style="background: #f5f5f5;">
+                <h4>👋 Welcome, Guest!</h4>
+                <p>Please log in to access more features.</p>
+                <button>Sign In</button>
+            </div>
+        </template>
+
+        <template x-if="userType === 'user'">
+            <div class="box" style="background: #e3f2fd;">
+                <h4>✓ Welcome, User!</h4>
+                <p>You have access to basic features.</p>
+                <button>View Profile</button>
+            </div>
+        </template>
+
+        <template x-if="userType === 'admin'">
+            <div class="box" style="background: #ffebee;">
+                <h4>⚙️ Admin Panel</h4>
+                <p>You have full administrative access.</p>
+                <button>Manage Users</button>
+                <button>System Settings</button>
+            </div>
+        </template>
+
+        <template x-if="userType === 'moderator'">
+            <div class="box" style="background: #fff3e0;">
+                <h4>🛡️ Moderator Panel</h4>
+                <p>You can moderate content and users.</p>
+                <button>Review Reports</button>
+                <button>Moderate Comments</button>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Multiple x-if conditions for different states. Only one panel exists in the DOM at a time.
+    </div>
+
+    <h2>Example 4: Conditional Forms</h2>
+    <div class="demo" x-data="{
+        formType: 'login',
+        loginData: { email: '', password: '' },
+        signupData: { name: '', email: '', password: '', confirmPassword: '' }
+    }">
+        <div style="margin-bottom: 15px;">
+            <button @click="formType = 'login'" :style="formType === 'login' ? 'background: #2196f3; color: white;' : ''">Login</button>
+            <button @click="formType = 'signup'" :style="formType === 'signup' ? 'background: #2196f3; color: white;' : ''">Sign Up</button>
+        </div>
+
+        <template x-if="formType === 'login'">
+            <div class="box">
+                <h4>Login Form</h4>
+                <input type="email" x-model="loginData.email" placeholder="Email" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
+                <input type="password" x-model="loginData.password" placeholder="Password" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
+                <button style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 4px;">Login</button>
+            </div>
+        </template>
+
+        <template x-if="formType === 'signup'">
+            <div class="box">
+                <h4>Sign Up Form</h4>
+                <input type="text" x-model="signupData.name" placeholder="Full Name" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
+                <input type="email" x-model="signupData.email" placeholder="Email" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
+                <input type="password" x-model="signupData.password" placeholder="Password" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
+                <input type="password" x-model="signupData.confirmPassword" placeholder="Confirm Password" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
+                <button style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 4px;">Sign Up</button>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-if is great for mutually exclusive forms. Only one form exists in the DOM, keeping it clean.
+    </div>
+
+    <h2>Example 5: Loading States</h2>
+    <div class="demo" x-data="{
+        state: 'idle',
+        data: null,
+        error: null,
+        loadData() {
+            this.state = 'loading';
+            this.data = null;
+            this.error = null;
+            setTimeout(() => {
+                if (Math.random() > 0.3) {
+                    this.data = { message: 'Data loaded successfully!', items: ['Item 1', 'Item 2', 'Item 3'] };
+                    this.state = 'success';
+                } else {
+                    this.error = 'Failed to load data';
+                    this.state = 'error';
+                }
+            }, 1500);
+        }
+    }">
+        <button @click="loadData()">Load Data</button>
+        <button @click="state = 'idle'; data = null; error = null;">Reset</button>
+
+        <template x-if="state === 'idle'">
+            <div class="box">
+                <p>Click "Load Data" to fetch data.</p>
+            </div>
+        </template>
+
+        <template x-if="state === 'loading'">
+            <div class="box">
+                <p>⏳ Loading data...</p>
+            </div>
+        </template>
+
+        <template x-if="state === 'success'">
+            <div class="box" style="background: #e8f5e9;">
+                <h4>✓ Success!</h4>
+                <p x-text="data?.message"></p>
+                <ul>
+                    <template x-for="item in data?.items" :key="item">
+                        <li x-text="item"></li>
+                    </template>
+                </ul>
+            </div>
+        </template>
+
+        <template x-if="state === 'error'">
+            <div class="box" style="background: #ffebee;">
+                <h4>✗ Error</h4>
+                <p x-text="error"></p>
+                <button @click="loadData()">Retry</button>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> State machine pattern with x-if. Each state has its own UI that's only in DOM when active.
+    </div>
+
+    <h2>Example 6: Nested x-if</h2>
+    <div class="demo" x-data="{
+        hasAccount: false,
+        isPremium: false
+    }">
+        <label><input type="checkbox" x-model="hasAccount"> Has Account</label>
+        <br>
+        <label><input type="checkbox" x-model="isPremium"> Is Premium</label>
+
+        <template x-if="!hasAccount">
+            <div class="box">
+                <p>Create an account to access features!</p>
+                <button>Sign Up</button>
+            </div>
+        </template>
+
+        <template x-if="hasAccount">
+            <div class="box">
+                <p>Welcome back!</p>
+
+                <template x-if="!isPremium">
+                    <div style="background: #e3f2fd; padding: 10px; margin: 10px 0; border-radius: 4px;">
+                        <p>Free Account - Upgrade to Premium for more features!</p>
+                        <button>Upgrade Now</button>
+                    </div>
+                </template>
+
+                <template x-if="isPremium">
+                    <div style="background: #fff3e0; padding: 10px; margin: 10px 0; border-radius: 4px;">
+                        <p>⭐ Premium Member - Thank you for your support!</p>
+                        <button>Manage Subscription</button>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-if can be nested. Inner conditions only evaluate if outer condition is true.
+    </div>
+
+    <h2>Example 7: Complex Expressions</h2>
+    <div class="demo" x-data="{
+        user: {
+            age: 25,
+            verified: true,
+            subscription: 'premium'
+        }
+    }">
+        <div>
+            <label>Age: <input type="number" x-model.number="user.age" style="width: 80px;"></label>
+            <label><input type="checkbox" x-model="user.verified"> Verified</label>
+            <select x-model="user.subscription">
+                <option value="free">Free</option>
+                <option value="basic">Basic</option>
+                <option value="premium">Premium</option>
+            </select>
+        </div>
+
+        <template x-if="user.age >= 18 && user.verified && user.subscription === 'premium'">
+            <div class="box" style="background: #e8f5e9;">
+                <h4>✓ Full Access Granted</h4>
+                <p>You meet all requirements for premium content!</p>
+            </div>
+        </template>
+
+        <template x-if="!(user.age >= 18 && user.verified && user.subscription === 'premium')">
+            <div class="box" style="background: #ffebee;">
+                <h4>⚠️ Access Restricted</h4>
+                <p>Requirements:</p>
+                <ul>
+                    <li :style="user.age >= 18 ? 'color: green;' : 'color: red;'">
+                        Age 18+ <span x-text="user.age >= 18 ? '✓' : '✗'"></span>
+                    </li>
+                    <li :style="user.verified ? 'color: green;' : 'color: red;'">
+                        Verified account <span x-text="user.verified ? '✓' : '✗'"></span>
+                    </li>
+                    <li :style="user.subscription === 'premium' ? 'color: green;' : 'color: red;'">
+                        Premium subscription <span x-text="user.subscription === 'premium' ? '✓' : '✗'"></span>
+                    </li>
+                </ul>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-if supports complex boolean expressions with multiple conditions using &&, ||, and !.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

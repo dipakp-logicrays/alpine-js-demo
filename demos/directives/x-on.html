@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-on Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+        .box { padding: 20px; margin: 10px 0; border: 2px solid #ddd; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-on Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-on?</strong>
+        <p>x-on listens to DOM events and executes code when they occur. Shorthand: use @ instead of x-on:. Example: @click instead of x-on:click.</p>
+    </div>
+
+    <h2>Example 1: Basic Click Events</h2>
+    <div class="demo" x-data="{ count: 0 }">
+        <p>Count: <span x-text="count"></span></p>
+        <button @click="count++">Increment</button>
+        <button @click="count--">Decrement</button>
+        <button @click="count = 0">Reset</button>
+        <button @click="count = count * 2">Double</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> @click listens for click events. Each button executes different JavaScript when clicked.
+    </div>
+
+    <h2>Example 2: Input Events</h2>
+    <div class="demo" x-data="{
+        text: '',
+        charCount: 0
+    }">
+        <input
+            type="text"
+            @input="charCount = $event.target.value.length"
+            @keyup="text = $event.target.value"
+            placeholder="Type something..."
+            style="width: 100%; padding: 10px;"
+        >
+        <p>Text: <span x-text="text"></span></p>
+        <p>Character count: <span x-text="charCount"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> @input and @keyup listen for input events. $event gives access to the native event object.
+    </div>
+
+    <h2>Example 3: Keyboard Modifiers</h2>
+    <div class="demo" x-data="{
+        message: 'Try keyboard shortcuts!',
+        log: []
+    }">
+        <input
+            type="text"
+            @keyup.enter="log.push('Enter pressed')"
+            @keyup.escape="log.push('Escape pressed'); $event.target.blur()"
+            @keyup.ctrl.s="log.push('Ctrl+S pressed'); $event.preventDefault()"
+            @keyup.shift.a="log.push('Shift+A pressed')"
+            placeholder="Press Enter, Escape, Ctrl+S, or Shift+A"
+            style="width: 100%; padding: 10px;"
+        >
+        <h4>Event Log:</h4>
+        <ul style="max-height: 150px; overflow-y: auto;">
+            <template x-for="(item, index) in log" :key="index">
+                <li x-text="item"></li>
+            </template>
+        </ul>
+        <button @click="log = []">Clear Log</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Keyboard modifiers: .enter, .escape, .ctrl, .shift, etc. Can be chained for combinations like .ctrl.s.
+    </div>
+
+    <h2>Example 4: Mouse Events</h2>
+    <div class="demo" x-data="{
+        mouseX: 0,
+        mouseY: 0,
+        isHovering: false,
+        clickCount: 0
+    }">
+        <div
+            class="box"
+            @mouseenter="isHovering = true"
+            @mouseleave="isHovering = false"
+            @mousemove="mouseX = $event.offsetX; mouseY = $event.offsetY"
+            @click="clickCount++"
+            @dblclick="clickCount = 0"
+            :style="isHovering ? 'background: lightblue; cursor: pointer;' : 'background: white;'"
+        >
+            <p>Hover over this box and move your mouse!</p>
+            <p>Mouse Position: X=<span x-text="mouseX"></span>, Y=<span x-text="mouseY"></span></p>
+            <p>Click count: <span x-text="clickCount"></span></p>
+            <p>Double-click to reset count</p>
+            <p>Hovering: <span x-text="isHovering ? 'Yes' : 'No'"></span></p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Mouse events include @mouseenter, @mouseleave, @mousemove, @click, @dblclick, and more.
+    </div>
+
+    <h2>Example 5: Event Modifiers</h2>
+    <div class="demo" x-data="{
+        logs: []
+    }">
+        <h4>Click Events with Modifiers</h4>
+
+        <button @click.once="logs.push('Clicked once - will not fire again')">
+            Click Once Only
+        </button>
+
+        <button @click.prevent="logs.push('Default prevented'); $el.blur()">
+            Prevent Default
+        </button>
+
+        <div @click="logs.push('Outer div clicked')" style="padding: 20px; background: #f0f0f0; margin: 10px 0;">
+            Outer Div
+            <button @click.stop="logs.push('Button clicked (stopped propagation)')">
+                Stop Propagation
+            </button>
+        </div>
+
+        <form @submit.prevent="logs.push('Form submitted (default prevented)')">
+            <input type="text" placeholder="Enter something">
+            <button type="submit">Submit Form</button>
+        </form>
+
+        <h4>Event Log:</h4>
+        <ul style="max-height: 150px; overflow-y: auto;">
+            <template x-for="(log, index) in logs" :key="index">
+                <li x-text="log"></li>
+            </template>
+        </ul>
+        <button @click="logs = []">Clear Log</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Event modifiers: .once (fires once), .prevent (preventDefault), .stop (stopPropagation), .self, .window, .document, .debounce, .throttle.
+    </div>
+
+    <h2>Example 6: Custom Events</h2>
+    <div class="demo" x-data="{
+        notifications: []
+    }" @notify.window="notifications.push($event.detail)">
+        <button @click="$dispatch('notify', 'User logged in')">
+            Dispatch Login Event
+        </button>
+        <button @click="$dispatch('notify', 'New message received')">
+            Dispatch Message Event
+        </button>
+        <button @click="$dispatch('notify', 'File uploaded successfully')">
+            Dispatch Upload Event
+        </button>
+
+        <h4>Notifications:</h4>
+        <ul>
+            <template x-for="(notification, index) in notifications" :key="index">
+                <li x-text="notification"></li>
+            </template>
+        </ul>
+        <button @click="notifications = []">Clear</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> @event.window listens for custom events. $dispatch() creates and dispatches custom events. Great for component communication.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

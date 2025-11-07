@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$refs Magic Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input, textarea { padding: 8px; margin: 5px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>$refs Magic Property</h1>
+
+    <div class="explanation">
+        <strong>What is $refs?</strong>
+        <p>$refs is an object containing all elements marked with x-ref within the current component. It provides easy access to specific DOM elements without querySelector.</p>
+    </div>
+
+    <h2>Example 1: Basic Reference</h2>
+    <div class="demo" x-data="{}">
+        <input type="text" x-ref="myInput" placeholder="Type here">
+        <button @click="alert($refs.myInput.value)">Show Value</button>
+        <button @click="$refs.myInput.value = ''">Clear</button>
+        <button @click="$refs.myInput.focus()">Focus</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-ref="myInput" creates a reference. Access it via $refs.myInput for direct DOM manipulation.
+    </div>
+
+    <h2>Example 2: Form Validation</h2>
+    <div class="demo" x-data="{
+        errors: [],
+        validate() {
+            this.errors = [];
+            if (!this.$refs.email.value.includes('@')) {
+                this.errors.push('Invalid email');
+                this.$refs.email.focus();
+            }
+            if (this.$refs.password.value.length < 8) {
+                this.errors.push('Password too short');
+                if (this.errors.length === 1) this.$refs.password.focus();
+            }
+            if (this.errors.length === 0) alert('Form valid!');
+        }
+    }">
+        <input type="email" x-ref="email" placeholder="Email" style="display: block; width: 100%; margin: 10px 0;">
+        <input type="password" x-ref="password" placeholder="Password (8+ chars)" style="display: block; width: 100%; margin: 10px 0;">
+        <button @click="validate()">Validate</button>
+        <ul style="color: red;">
+            <template x-for="error in errors" :key="error">
+                <li x-text="error"></li>
+            </template>
+        </ul>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $refs enables custom validation with automatic focus on first invalid field.
+    </div>
+
+    <h2>Example 3: Multiple Refs</h2>
+    <div class="demo" x-data="{ result: '' }">
+        <input type="number" x-ref="num1" value="5" style="width: 80px;">
+        <select x-ref="operator">
+            <option>+</option>
+            <option>-</option>
+            <option>*</option>
+            <option>/</option>
+        </select>
+        <input type="number" x-ref="num2" value="3" style="width: 80px;">
+        <button @click="result = eval($refs.num1.value + $refs.operator.value + $refs.num2.value)">Calculate</button>
+        <p>Result: <span x-text="result || '?'"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Access multiple refs ($refs.num1, $refs.operator, $refs.num2) in a single expression.
+    </div>
+
+    <h2>Example 4: Dynamic Content</h2>
+    <div class="demo" x-data="{}">
+        <textarea x-ref="editor" rows="5" style="width: 100%; padding: 10px;">Edit this text...</textarea>
+        <div style="margin: 10px 0;">
+            <button @click="$refs.preview.textContent = $refs.editor.value">Preview</button>
+            <button @click="$refs.editor.select()">Select All</button>
+            <button @click="navigator.clipboard.writeText($refs.editor.value)">Copy</button>
+        </div>
+        <div x-ref="preview" style="background: white; padding: 15px; border: 1px solid #ddd; white-space: pre-wrap;"></div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $refs connects editor and preview areas for real-time content manipulation.
+    </div>
+
+    <h2>Example 5: Canvas Drawing</h2>
+    <div class="demo" x-data="{
+        draw(shape) {
+            const canvas = this.$refs.canvas;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (shape === 'circle') {
+                ctx.beginPath();
+                ctx.arc(150, 75, 50, 0, 2 * Math.PI);
+                ctx.fillStyle = '#2196f3';
+                ctx.fill();
+            } else if (shape === 'square') {
+                ctx.fillStyle = '#4caf50';
+                ctx.fillRect(100, 25, 100, 100);
+            } else if (shape === 'triangle') {
+                ctx.beginPath();
+                ctx.moveTo(150, 25);
+                ctx.lineTo(200, 125);
+                ctx.lineTo(100, 125);
+                ctx.closePath();
+                ctx.fillStyle = '#f44336';
+                ctx.fill();
+            }
+        }
+    }">
+        <canvas x-ref="canvas" width="300" height="150" style="border: 1px solid #ddd; display: block; margin: 10px 0;"></canvas>
+        <button @click="draw('circle')">Circle</button>
+        <button @click="draw('square')">Square</button>
+        <button @click="draw('triangle')">Triangle</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $refs.canvas provides access to canvas element for drawing operations.
+    </div>
+
+    <h2>Example 6: File Upload Preview</h2>
+    <div class="demo" x-data="{
+        preview() {
+            const file = this.$refs.fileInput.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.$refs.previewImg.src = e.target.result;
+                    this.$refs.previewImg.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    }">
+        <input type="file" x-ref="fileInput" @change="preview()" accept="image/*">
+        <img x-ref="previewImg" style="max-width: 300px; display: none; margin: 10px 0; border: 1px solid #ddd;">
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $refs accesses both file input and preview image for client-side file handling.
+    </div>
+
+    <h2>Example 7: Scroll Control</h2>
+    <div class="demo" x-data="{}">
+        <div x-ref="scrollBox" style="height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+            <p style="height: 100px;">Content 1</p>
+            <p style="height: 100px;">Content 2</p>
+            <p style="height: 100px;">Content 3</p>
+            <p style="height: 100px;">Content 4</p>
+        </div>
+        <div style="margin: 10px 0;">
+            <button @click="$refs.scrollBox.scrollTop = 0">Scroll to Top</button>
+            <button @click="$refs.scrollBox.scrollTop = $refs.scrollBox.scrollHeight">Scroll to Bottom</button>
+            <button @click="$refs.scrollBox.scrollTop = $refs.scrollBox.scrollHeight / 2">Scroll to Middle</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $refs enables programmatic scroll control via scrollTop and scrollHeight properties.
+    </div>
+
+    <h2>Example 8: Audio Player</h2>
+    <div class="demo" x-data="{ playing: false, currentTime: 0, duration: 0 }">
+        <audio
+            x-ref="audio"
+            @play="playing = true"
+            @pause="playing = false"
+            @timeupdate="currentTime = $refs.audio.currentTime; duration = $refs.audio.duration"
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        ></audio>
+
+        <button @click="$refs.audio.play()">Play</button>
+        <button @click="$refs.audio.pause()">Pause</button>
+        <button @click="$refs.audio.currentTime = 0">Restart</button>
+        <button @click="$refs.audio.volume = Math.max(0, $refs.audio.volume - 0.1)">Volume -</button>
+        <button @click="$refs.audio.volume = Math.min(1, $refs.audio.volume + 0.1)">Volume +</button>
+
+        <p>Status: <span x-text="playing ? 'Playing' : 'Paused'"></span></p>
+        <p>Time: <span x-text="Math.floor(currentTime)"></span>s / <span x-text="Math.floor(duration)"></span>s</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $refs.audio controls audio playback with play(), pause(), volume, and currentTime.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

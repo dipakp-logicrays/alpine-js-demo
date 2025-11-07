@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-text Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; width: 300px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-text Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-text?</strong>
+        <p>x-text sets the text content of an element. It automatically escapes HTML, making it safe for displaying user input. Updates automatically when data changes.</p>
+    </div>
+
+    <h2>Example 1: Basic Text Display</h2>
+    <div class="demo" x-data="{ message: 'Hello, Alpine.js!' }">
+        <p>Message: <span x-text="message"></span></p>
+        <input type="text" x-model="message" placeholder="Change the message">
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-text displays the value of message. It updates automatically when the data changes.
+    </div>
+
+    <h2>Example 2: Expressions and Calculations</h2>
+    <div class="demo" x-data="{ price: 100, quantity: 3, taxRate: 0.08 }">
+        <p>Price: $<span x-text="price"></span></p>
+        <p>Quantity: <span x-text="quantity"></span></p>
+        <p>Subtotal: $<span x-text="price * quantity"></span></p>
+        <p>Tax (8%): $<span x-text="(price * quantity * taxRate).toFixed(2)"></span></p>
+        <p>Total: $<span x-text="(price * quantity * (1 + taxRate)).toFixed(2)"></span></p>
+
+        <div>
+            <input type="number" x-model.number="price" placeholder="Price">
+            <input type="number" x-model.number="quantity" placeholder="Quantity">
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-text can evaluate JavaScript expressions, including calculations and method calls like .toFixed().
+    </div>
+
+    <h2>Example 3: Conditional Text</h2>
+    <div class="demo" x-data="{
+        score: 75,
+        getGrade() {
+            if (this.score >= 90) return 'A';
+            if (this.score >= 80) return 'B';
+            if (this.score >= 70) return 'C';
+            if (this.score >= 60) return 'D';
+            return 'F';
+        }
+    }">
+        <p>Score: <span x-text="score"></span></p>
+        <p>Grade: <span x-text="getGrade()"></span></p>
+        <p>Status: <span x-text="score >= 60 ? 'Pass' : 'Fail'"></span></p>
+
+        <input type="range" x-model.number="score" min="0" max="100" style="width: 100%;">
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-text can use ternary operators and call methods. The text updates as you adjust the slider.
+    </div>
+
+    <h2>Example 4: String Manipulation</h2>
+    <div class="demo" x-data="{ text: 'hello world' }">
+        <input type="text" x-model="text" placeholder="Enter text" style="width: 100%;">
+
+        <p>Original: <span x-text="text"></span></p>
+        <p>Uppercase: <span x-text="text.toUpperCase()"></span></p>
+        <p>Lowercase: <span x-text="text.toLowerCase()"></span></p>
+        <p>Capitalized: <span x-text="text.charAt(0).toUpperCase() + text.slice(1)"></span></p>
+        <p>Length: <span x-text="text.length"></span> characters</p>
+        <p>Reversed: <span x-text="text.split('').reverse().join('')"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-text works with all JavaScript string methods for text transformation.
+    </div>
+
+    <h2>Example 5: Date and Time Formatting</h2>
+    <div class="demo" x-data="{
+        timestamp: Date.now(),
+        updateTime() {
+            this.timestamp = Date.now();
+        }
+    }" x-init="setInterval(() => updateTime(), 1000)">
+        <p>Current Time: <span x-text="new Date(timestamp).toLocaleTimeString()"></span></p>
+        <p>Current Date: <span x-text="new Date(timestamp).toLocaleDateString()"></span></p>
+        <p>Full DateTime: <span x-text="new Date(timestamp).toString()"></span></p>
+        <p>ISO Format: <span x-text="new Date(timestamp).toISOString()"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-text can format dates using Date methods. This example updates every second to show a live clock.
+    </div>
+
+    <h2>Example 6: HTML Safety (Escaping)</h2>
+    <div class="demo" x-data="{ userInput: '<script>alert(\"XSS\")</script><b>Bold text</b>' }">
+        <p>User Input (with x-text - safe):</p>
+        <div style="background: #fff; padding: 10px; border: 1px solid #ddd;" x-text="userInput"></div>
+
+        <p style="margin-top: 20px;">The HTML tags are escaped and shown as text, not executed. This prevents XSS attacks.</p>
+
+        <input type="text" x-model="userInput" placeholder="Try entering HTML" style="width: 100%;">
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-text automatically escapes HTML, making it safe to display user input. HTML tags appear as text, not rendered HTML.
+    </div>
+
+    <h2>Example 7: Template Literals</h2>
+    <div class="demo" x-data="{
+        firstName: 'John',
+        lastName: 'Doe',
+        age: 30,
+        city: 'New York'
+    }">
+        <p x-text="`Full Name: ${firstName} ${lastName}`"></p>
+        <p x-text="`${firstName} is ${age} years old and lives in ${city}`"></p>
+        <p x-text="`In 10 years, ${firstName} will be ${age + 10} years old`"></p>
+
+        <div>
+            <input type="text" x-model="firstName" placeholder="First Name">
+            <input type="text" x-model="lastName" placeholder="Last Name">
+            <input type="number" x-model.number="age" placeholder="Age">
+            <input type="text" x-model="city" placeholder="City">
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-text supports template literals for easy string interpolation with embedded expressions.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

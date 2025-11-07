@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-data Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-data Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-data?</strong>
+        <p>x-data declares a new Alpine component and defines its reactive data object. All Alpine directives within this element can access and modify this data.</p>
+    </div>
+
+    <h2>Example 1: Basic Counter</h2>
+    <div class="demo" x-data="{ count: 0 }">
+        <p>Count: <span x-text="count"></span></p>
+        <button @click="count++">Increment</button>
+        <button @click="count--">Decrement</button>
+        <button @click="count = 0">Reset</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-data="{ count: 0 }" creates a component with a reactive count property initialized to 0.
+    </div>
+
+    <h2>Example 2: Multiple Data Properties</h2>
+    <div class="demo" x-data="{ name: 'John', age: 25, city: 'New York' }">
+        <p>Name: <span x-text="name"></span></p>
+        <p>Age: <span x-text="age"></span></p>
+        <p>City: <span x-text="city"></span></p>
+        <input type="text" x-model="name" placeholder="Change name">
+        <input type="number" x-model="age" placeholder="Change age">
+        <input type="text" x-model="city" placeholder="Change city">
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Multiple properties can be defined in the data object. Each property is reactive and can be updated independently.
+    </div>
+
+    <h2>Example 3: Nested Objects</h2>
+    <div class="demo" x-data="{ user: { firstName: 'Jane', lastName: 'Doe', email: 'jane@example.com' } }">
+        <p>Full Name: <span x-text="user.firstName + ' ' + user.lastName"></span></p>
+        <p>Email: <span x-text="user.email"></span></p>
+        <input type="text" x-model="user.firstName" placeholder="First name">
+        <input type="text" x-model="user.lastName" placeholder="Last name">
+        <input type="email" x-model="user.email" placeholder="Email">
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Data can contain nested objects. Access nested properties using dot notation (user.firstName).
+    </div>
+
+    <h2>Example 4: Component with Methods</h2>
+    <div class="demo" x-data="{
+        items: ['Apple', 'Banana', 'Orange'],
+        newItem: '',
+        addItem() {
+            if (this.newItem.trim()) {
+                this.items.push(this.newItem);
+                this.newItem = '';
+            }
+        },
+        removeItem(index) {
+            this.items.splice(index, 1);
+        }
+    }">
+        <h3>Shopping List</h3>
+        <ul>
+            <template x-for="(item, index) in items" :key="index">
+                <li>
+                    <span x-text="item"></span>
+                    <button @click="removeItem(index)">Remove</button>
+                </li>
+            </template>
+        </ul>
+        <input type="text" x-model="newItem" @keyup.enter="addItem" placeholder="Add item">
+        <button @click="addItem">Add</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-data can include methods alongside data properties. Methods can access data using 'this' keyword.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

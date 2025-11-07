@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-ref Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input, textarea { padding: 8px; margin: 5px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-ref Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-ref?</strong>
+        <p>x-ref creates a reference to DOM elements that can be accessed via $refs magic property. It's like getElementById but integrated into Alpine's reactivity system.</p>
+    </div>
+
+    <h2>Example 1: Focus Input</h2>
+    <div class="demo" x-data="{}">
+        <input type="text" x-ref="myInput" placeholder="This input can be focused">
+        <button @click="$refs.myInput.focus()">Focus Input</button>
+        <button @click="$refs.myInput.blur()">Blur Input</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-ref="myInput" creates a reference. Access it with $refs.myInput to call native DOM methods like focus().
+    </div>
+
+    <h2>Example 2: Get/Set Values</h2>
+    <div class="demo" x-data="{ savedValue: '' }">
+        <input type="text" x-ref="textInput" placeholder="Enter text">
+        <button @click="savedValue = $refs.textInput.value">Save Value</button>
+        <button @click="$refs.textInput.value = ''">Clear Input</button>
+        <button @click="$refs.textInput.value = 'Hello World!'">Set to 'Hello World!'</button>
+
+        <p>Saved value: <span x-text="savedValue || '(none)'"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Access and modify input values directly using $refs. Useful for interacting with unbound form elements.
+    </div>
+
+    <h2>Example 3: Scroll to Element</h2>
+    <div class="demo" x-data="{}">
+        <button @click="$refs.target.scrollIntoView({ behavior: 'smooth' })">Scroll to Target</button>
+
+        <div style="height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin: 10px 0;">
+            <p>Scroll content...</p>
+            <p style="height: 100px;">More content...</p>
+            <p style="height: 100px;">More content...</p>
+            <div x-ref="target" style="background: yellow; padding: 15px; border-radius: 4px;">
+                <strong>Target Element!</strong>
+            </div>
+            <p style="height: 100px;">More content...</p>
+            <p style="height: 100px;">More content...</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use x-ref with scrollIntoView() to create smooth scrolling effects to specific elements.
+    </div>
+
+    <h2>Example 4: Multiple Refs</h2>
+    <div class="demo" x-data="{ result: '' }">
+        <input type="number" x-ref="num1" placeholder="Number 1" value="5">
+        <input type="number" x-ref="num2" placeholder="Number 2" value="3">
+
+        <div style="margin: 10px 0;">
+            <button @click="result = Number($refs.num1.value) + Number($refs.num2.value)">Add</button>
+            <button @click="result = Number($refs.num1.value) - Number($refs.num2.value)">Subtract</button>
+            <button @click="result = Number($refs.num1.value) * Number($refs.num2.value)">Multiply</button>
+            <button @click="result = Number($refs.num1.value) / Number($refs.num2.value)">Divide</button>
+        </div>
+
+        <p>Result: <span x-text="result || '(click a button)'"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use multiple x-ref directives to reference different elements. Access each via $refs.refName.
+    </div>
+
+    <h2>Example 5: Manipulate Styles</h2>
+    <div class="demo" x-data="{}">
+        <div
+            x-ref="box"
+            style="width: 100px; height: 100px; background: blue; transition: all 0.3s; margin: 10px 0;"
+        ></div>
+
+        <button @click="$refs.box.style.background = 'red'">Red</button>
+        <button @click="$refs.box.style.background = 'green'">Green</button>
+        <button @click="$refs.box.style.background = 'blue'">Blue</button>
+        <button @click="$refs.box.style.width = '200px'">Wide</button>
+        <button @click="$refs.box.style.width = '100px'">Normal</button>
+        <button @click="$refs.box.style.transform = 'rotate(45deg)'">Rotate</button>
+        <button @click="$refs.box.style.transform = 'rotate(0deg)'">Reset</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Direct access to element.style allows dynamic CSS manipulation without data binding.
+    </div>
+
+    <h2>Example 6: Working with Canvas</h2>
+    <div class="demo" x-data="{
+        drawCircle() {
+            const canvas = this.$refs.canvas;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.arc(150, 75, 50, 0, 2 * Math.PI);
+            ctx.fillStyle = '#2196f3';
+            ctx.fill();
+        },
+        drawSquare() {
+            const canvas = this.$refs.canvas;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#4caf50';
+            ctx.fillRect(100, 25, 100, 100);
+        },
+        clear() {
+            const canvas = this.$refs.canvas;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }">
+        <canvas x-ref="canvas" width="300" height="150" style="border: 1px solid #ddd; display: block; margin: 10px 0;"></canvas>
+
+        <button @click="drawCircle()">Draw Circle</button>
+        <button @click="drawSquare()">Draw Square</button>
+        <button @click="clear()">Clear</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-ref is perfect for accessing canvas elements and other APIs that require direct DOM access.
+    </div>
+
+    <h2>Example 7: Form Validation</h2>
+    <div class="demo" x-data="{
+        errors: {},
+        validate() {
+            this.errors = {};
+            if (!this.$refs.username.value) {
+                this.errors.username = 'Username is required';
+                this.$refs.username.focus();
+                return false;
+            }
+            if (this.$refs.email.value && !this.$refs.email.value.includes('@')) {
+                this.errors.email = 'Email must be valid';
+                this.$refs.email.focus();
+                return false;
+            }
+            if (this.$refs.password.value.length < 8) {
+                this.errors.password = 'Password must be at least 8 characters';
+                this.$refs.password.focus();
+                return false;
+            }
+            alert('Form is valid!');
+            return true;
+        }
+    }">
+        <div>
+            <input type="text" x-ref="username" placeholder="Username" style="display: block; width: 100%; margin: 5px 0;">
+            <p x-show="errors.username" x-text="errors.username" style="color: red; margin: 0;"></p>
+        </div>
+
+        <div>
+            <input type="email" x-ref="email" placeholder="Email" style="display: block; width: 100%; margin: 5px 0;">
+            <p x-show="errors.email" x-text="errors.email" style="color: red; margin: 0;"></p>
+        </div>
+
+        <div>
+            <input type="password" x-ref="password" placeholder="Password" style="display: block; width: 100%; margin: 5px 0;">
+            <p x-show="errors.password" x-text="errors.password" style="color: red; margin: 0;"></p>
+        </div>
+
+        <button @click="validate()">Validate Form</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use $refs for custom form validation, including focusing on the first invalid field.
+    </div>
+
+    <h2>Example 8: Text Selection</h2>
+    <div class="demo" x-data="{}">
+        <textarea x-ref="text" rows="4" style="width: 100%; padding: 10px;">This is some sample text that you can select programmatically.</textarea>
+
+        <button @click="$refs.text.select()">Select All</button>
+        <button @click="$refs.text.setSelectionRange(0, 10)">Select First 10 Chars</button>
+        <button @click="navigator.clipboard.writeText($refs.text.value).then(() => alert('Copied!'))">Copy to Clipboard</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-ref provides access to selection APIs for text manipulation and clipboard operations.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

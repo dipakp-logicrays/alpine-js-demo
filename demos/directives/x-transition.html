@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-transition Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .box { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; border: 2px solid #2196f3; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-transition Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-transition?</strong>
+        <p>x-transition adds smooth CSS transitions when elements are shown or hidden. Works with x-show, x-if, and other visibility directives.</p>
+    </div>
+
+    <h2>Example 1: Basic Fade Transition</h2>
+    <div class="demo" x-data="{ show: true }">
+        <button @click="show = !show">Toggle</button>
+        <div x-show="show" x-transition class="box">
+            <p>This box fades in and out smoothly!</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-transition adds a default fade transition. Elements fade in/out when toggled.
+    </div>
+
+    <h2>Example 2: Custom Duration</h2>
+    <div class="demo" x-data="{ show: true }">
+        <button @click="show = !show">Toggle</button>
+        <div x-show="show" x-transition.duration.500ms class="box">
+            <p>This transition takes 500ms</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> .duration modifier sets custom transition duration (e.g., .duration.500ms or .duration.2s).
+    </div>
+
+    <h2>Example 3: Scale Transition</h2>
+    <div class="demo" x-data="{ show: true }">
+        <button @click="show = !show">Toggle</button>
+        <div
+            x-show="show"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform scale-90"
+            x-transition:enter-end="opacity-100 transform scale-100"
+            x-transition:leave="transition ease-in duration-300"
+            x-transition:leave-start="opacity-100 transform scale-100"
+            x-transition:leave-end="opacity-0 transform scale-90"
+            class="box"
+            style="transform-origin: center;"
+        >
+            <p>This box scales up when appearing and scales down when disappearing!</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use enter/leave modifiers for granular control: enter-start, enter-end, leave-start, leave-end define transition states.
+    </div>
+
+    <h2>Example 4: Slide Down Transition</h2>
+    <div class="demo" x-data="{ show: true }">
+        <button @click="show = !show">Toggle</button>
+        <div
+            x-show="show"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform -translate-y-4"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform -translate-y-4"
+            class="box"
+        >
+            <p>This box slides down from above!</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use transform translate-y to create slide animations. Negative values slide from top, positive from bottom.
+    </div>
+
+    <h2>Example 5: Slide from Side</h2>
+    <div class="demo" x-data="{ show: true, direction: 'left' }">
+        <button @click="show = !show">Toggle</button>
+        <select x-model="direction">
+            <option value="left">Slide from Left</option>
+            <option value="right">Slide from Right</option>
+        </select>
+
+        <div
+            x-show="show"
+            x-transition:enter="transition ease-out duration-300"
+            :x-transition:enter-start="direction === 'left' ? 'opacity-0 transform -translate-x-full' : 'opacity-0 transform translate-x-full'"
+            x-transition:enter-end="opacity-100 transform translate-x-0"
+            x-transition:leave="transition ease-in duration-300"
+            x-transition:leave-start="opacity-100 transform translate-x-0"
+            :x-transition:leave-end="direction === 'left' ? 'opacity-0 transform -translate-x-full' : 'opacity-0 transform translate-x-full'"
+            class="box"
+        >
+            <p>This box slides from the <span x-text="direction"></span>!</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use translate-x for horizontal sliding. Dynamic transitions can be controlled with bindings.
+    </div>
+
+    <h2>Example 6: Rotate Transition</h2>
+    <div class="demo" x-data="{ show: true }">
+        <button @click="show = !show">Toggle</button>
+        <div
+            x-show="show"
+            x-transition:enter="transition ease-out duration-500"
+            x-transition:enter-start="opacity-0 transform rotate-180 scale-0"
+            x-transition:enter-end="opacity-100 transform rotate-0 scale-100"
+            x-transition:leave="transition ease-in duration-500"
+            x-transition:leave-start="opacity-100 transform rotate-0 scale-100"
+            x-transition:leave-end="opacity-0 transform rotate-180 scale-0"
+            class="box"
+            style="transform-origin: center;"
+        >
+            <p>This box rotates and scales!</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Combine multiple transform properties (rotate, scale, translate) for complex animations.
+    </div>
+
+    <h2>Example 7: Modal with Backdrop</h2>
+    <div class="demo" x-data="{ open: false }">
+        <button @click="open = true">Open Modal</button>
+
+        <!-- Backdrop -->
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="open = false"
+            style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;"
+        >
+            <!-- Modal -->
+            <div
+                x-show="open"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform scale-95"
+                x-transition:enter-end="opacity-100 transform scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 transform scale-100"
+                x-transition:leave-end="opacity-0 transform scale-95"
+                @click.stop
+                style="background: white; padding: 30px; border-radius: 8px; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);"
+            >
+                <h3 style="margin-top: 0;">Modal Title</h3>
+                <p>This is a modal with smooth transitions!</p>
+                <button @click="open = false">Close</button>
+            </div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Separate transitions for backdrop (fade) and modal (scale) create a polished effect. Click backdrop to close.
+    </div>
+
+    <h2>Example 8: List Item Transitions</h2>
+    <div class="demo" x-data="{
+        items: ['Item 1', 'Item 2', 'Item 3'],
+        newItem: '',
+        add() {
+            if (this.newItem.trim()) {
+                this.items.push(this.newItem.trim());
+                this.newItem = '';
+            }
+        },
+        remove(index) {
+            this.items.splice(index, 1);
+        }
+    }">
+        <input type="text" x-model="newItem" @keyup.enter="add()" placeholder="Add item">
+        <button @click="add()">Add</button>
+
+        <template x-for="(item, index) in items" :key="item">
+            <div
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform translate-x-4"
+                x-transition:enter-end="opacity-100 transform translate-x-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 transform translate-x-0"
+                x-transition:leave-end="opacity-0 transform -translate-x-4"
+                class="box"
+                style="display: flex; justify-content: space-between; align-items: center;"
+            >
+                <span x-text="item"></span>
+                <button @click="remove(index)" style="background: #e74c3c; color: white; border: none; padding: 5px 10px;">Remove</button>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Note: x-transition with x-for has limitations in Alpine.js. For complex list animations, consider using x-show on each item or CSS animations.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

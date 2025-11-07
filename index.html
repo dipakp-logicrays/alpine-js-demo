@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpine.js Demos - Complete Reference</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 48px;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin: 10px 0;
+        }
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .search-box input:focus {
+            border-color: #667eea;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        .tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .content-section h2 {
+            color: #333;
+            margin: 0 0 20px 0;
+            font-size: 28px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .demo-card {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .demo-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        .demo-card h3 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+            font-size: 20px;
+        }
+        .demo-card p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        .badge.magic {
+            background: #764ba2;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        .stat-card h3 {
+            margin: 0;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .stat-card p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div x-data="{
+        activeTab: 'all',
+        searchQuery: '',
+        directives: [
+            { name: 'x-data', desc: 'Declares a new Alpine component and its reactive data' },
+            { name: 'x-init', desc: 'Runs code when a component is initialized' },
+            { name: 'x-show', desc: 'Toggles element visibility using CSS display property' },
+            { name: 'x-bind', desc: 'Dynamically binds HTML attributes to Alpine data' },
+            { name: 'x-on', desc: 'Listens to DOM events and executes code' },
+            { name: 'x-text', desc: 'Sets the text content of an element (HTML-safe)' },
+            { name: 'x-html', desc: 'Sets the inner HTML of an element (use with caution)' },
+            { name: 'x-model', desc: 'Creates two-way data binding for form inputs' },
+            { name: 'x-modelable', desc: 'Makes component properties available for x-model binding' },
+            { name: 'x-for', desc: 'Loops through arrays and creates DOM elements' },
+            { name: 'x-transition', desc: 'Adds smooth CSS transitions when elements show/hide' },
+            { name: 'x-effect', desc: 'Automatically re-runs code when dependencies change' },
+            { name: 'x-ignore', desc: 'Tells Alpine to skip initializing an element' },
+            { name: 'x-ref', desc: 'Creates a reference to DOM elements for easy access' },
+            { name: 'x-cloak', desc: 'Hides elements until Alpine.js is fully loaded' },
+            { name: 'x-teleport', desc: 'Moves elements to different DOM locations' },
+            { name: 'x-if', desc: 'Conditionally adds/removes elements from DOM' },
+            { name: 'x-id', desc: 'Generates unique IDs for elements and ARIA relationships' }
+        ],
+        magics: [
+            { name: '$el', desc: 'References the current DOM element' },
+            { name: '$refs', desc: 'Access elements marked with x-ref' },
+            { name: '$store', desc: 'Global state management across components' },
+            { name: '$watch', desc: 'Monitors data properties and executes callbacks' },
+            { name: '$dispatch', desc: 'Creates and dispatches custom browser events' },
+            { name: '$nextTick', desc: 'Waits for next DOM update cycle' },
+            { name: '$root', desc: 'References the root element of the component' },
+            { name: '$data', desc: 'Access all reactive data properties' },
+            { name: '$id', desc: 'Generates unique IDs for accessibility' }
+        ],
+        get filteredDirectives() {
+            if (!this.searchQuery) return this.directives;
+            const query = this.searchQuery.toLowerCase();
+            return this.directives.filter(d =>
+                d.name.toLowerCase().includes(query) ||
+                d.desc.toLowerCase().includes(query)
+            );
+        },
+        get filteredMagics() {
+            if (!this.searchQuery) return this.magics;
+            const query = this.searchQuery.toLowerCase();
+            return this.magics.filter(m =>
+                m.name.toLowerCase().includes(query) ||
+                m.desc.toLowerCase().includes(query)
+            );
+        },
+        get totalDemos() {
+            return this.directives.length + this.magics.length;
+        },
+        get visibleDemos() {
+            if (this.activeTab === 'all') return this.totalDemos;
+            if (this.activeTab === 'directives') return this.directives.length;
+            return this.magics.length;
+        }
+    }">
+        <div class="header">
+            <h1>Alpine.js Complete Reference</h1>
+            <p>Comprehensive demos for all Alpine.js directives and magic properties</p>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <h3 x-text="directives.length"></h3>
+                    <p>Directives</p>
+                </div>
+                <div class="stat-card">
+                    <h3 x-text="magics.length"></h3>
+                    <p>Magic Properties</p>
+                </div>
+                <div class="stat-card">
+                    <h3 x-text="totalDemos"></h3>
+                    <p>Total Demos</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-box">
+            <input
+                type="text"
+                x-model="searchQuery"
+                placeholder="Search demos... (e.g., 'data binding', 'events', 'loop')"
+            >
+        </div>
+
+        <div class="tabs">
+            <button
+                class="tab"
+                :class="{ 'active': activeTab === 'all' }"
+                @click="activeTab = 'all'"
+            >
+                All Demos (<span x-text="totalDemos"></span>)
+            </button>
+            <button
+                class="tab"
+                :class="{ 'active': activeTab === 'directives' }"
+                @click="activeTab = 'directives'"
+            >
+                Directives (<span x-text="directives.length"></span>)
+            </button>
+            <button
+                class="tab"
+                :class="{ 'active': activeTab === 'magics' }"
+                @click="activeTab = 'magics'"
+            >
+                Magic Properties (<span x-text="magics.length"></span>)
+            </button>
+        </div>
+
+        <div class="content-section" x-show="activeTab === 'all' || activeTab === 'directives'">
+            <h2>Alpine.js Directives</h2>
+            <p style="color: #666; margin-bottom: 20px;">
+                Directives are special attributes that tell Alpine.js how to handle elements. They start with 'x-' prefix.
+            </p>
+
+            <template x-if="filteredDirectives.length === 0">
+                <div class="no-results">No directives found matching "<span x-text="searchQuery"></span>"</div>
+            </template>
+
+            <div class="demo-grid">
+                <template x-for="directive in filteredDirectives" :key="directive.name">
+                    <a :href="'demos/directives/' + directive.name + '.html'" class="demo-card">
+                        <h3 x-text="directive.name"></h3>
+                        <p x-text="directive.desc"></p>
+                        <span class="badge">Directive</span>
+                    </a>
+                </template>
+            </div>
+        </div>
+
+        <div class="content-section" x-show="activeTab === 'all' || activeTab === 'magics'" style="margin-top: 30px;">
+            <h2>Alpine.js Magic Properties</h2>
+            <p style="color: #666; margin-bottom: 20px;">
+                Magic properties are special helpers that start with '$' and provide powerful functionality.
+            </p>
+
+            <template x-if="filteredMagics.length === 0">
+                <div class="no-results">No magic properties found matching "<span x-text="searchQuery"></span>"</div>
+            </template>
+
+            <div class="demo-grid">
+                <template x-for="magic in filteredMagics" :key="magic.name">
+                    <a :href="'demos/magics/' + magic.name + '.html'" class="demo-card">
+                        <h3 x-text="magic.name"></h3>
+                        <p x-text="magic.desc"></p>
+                        <span class="badge magic">Magic</span>
+                    </a>
+                </template>
+            </div>
+        </div>
+
+        <div style="text-align: center; padding: 40px 20px; color: white; margin-top: 30px;">
+            <p style="font-size: 14px; opacity: 0.8;">
+                All demos are interactive and include detailed explanations.<br>
+                Built with Alpine.js v3 - <a href="https://alpinejs.dev" target="_blank" style="color: white; text-decoration: underline;">Official Documentation</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

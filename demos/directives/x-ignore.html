@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-ignore Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        .box { background: white; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-ignore Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-ignore?</strong>
+        <p>x-ignore tells Alpine to skip initializing an element and its children. Useful for preventing Alpine from processing certain parts of your HTML.</p>
+    </div>
+
+    <h2>Example 1: Basic Ignore</h2>
+    <div class="demo" x-data="{ message: 'Hello from Alpine!' }">
+        <div class="box">
+            <h4>With Alpine (processed):</h4>
+            <p x-text="message"></p>
+            <p>This is processed by Alpine.js</p>
+        </div>
+
+        <div class="box" x-ignore>
+            <h4>With x-ignore (NOT processed):</h4>
+            <p x-text="message"></p>
+            <p>Alpine directives are ignored here. The x-text above won't work.</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-ignore prevents Alpine from initializing the element. Directives like x-text won't work inside x-ignore.
+    </div>
+
+    <h2>Example 2: Template Literals</h2>
+    <div class="demo" x-data="{ name: 'John', role: 'developer' }">
+        <div class="box">
+            <h4>Alpine Template (won't work without ignore):</h4>
+            <div x-ignore>
+                <pre>&lt;div x-data="{ name: 'John' }"&gt;
+    &lt;p x-text="name"&gt;&lt;/p&gt;
+&lt;/div&gt;</pre>
+            </div>
+        </div>
+
+        <div class="box">
+            <h4>Actual Alpine Component:</h4>
+            <p>Name: <span x-text="name"></span></p>
+            <p>Role: <span x-text="role"></span></p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use x-ignore to display Alpine code examples without Alpine trying to process them.
+    </div>
+
+    <h2>Example 3: Third-Party Libraries</h2>
+    <div class="demo" x-data="{ count: 5 }">
+        <p>Alpine count: <span x-text="count"></span></p>
+
+        <div class="box" x-ignore>
+            <h4>Third-Party Widget Area (ignored by Alpine)</h4>
+            <p>This area might be managed by another JavaScript library.</p>
+            <p>x-data="{ ignored: true }" won't be processed</p>
+            <div x-data="{ ignored: true }">
+                <button x-text="'This won't work'">Original Button Text</button>
+            </div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use x-ignore when integrating third-party libraries that might conflict with Alpine's syntax.
+    </div>
+
+    <h2>Example 4: Performance Optimization</h2>
+    <div class="demo" x-data="{ activeTab: 'tab1' }">
+        <button @click="activeTab = 'tab1'">Tab 1 (Alpine)</button>
+        <button @click="activeTab = 'tab2'">Tab 2 (Ignored)</button>
+
+        <div x-show="activeTab === 'tab1'" class="box">
+            <h4>Tab 1 - Alpine Managed</h4>
+            <div x-data="{ items: ['A', 'B', 'C'] }">
+                <template x-for="item in items" :key="item">
+                    <p x-text="item"></p>
+                </template>
+            </div>
+        </div>
+
+        <div x-show="activeTab === 'tab2'" class="box" x-ignore>
+            <h4>Tab 2 - Static Content (Ignored)</h4>
+            <p>This content is static and doesn't need Alpine processing.</p>
+            <p>Using x-ignore can improve initial load performance for large static sections.</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use x-ignore on large static sections to improve initialization performance by skipping unnecessary processing.
+    </div>
+
+    <h2>Example 5: Documentation Examples</h2>
+    <div class="demo">
+        <div class="box" x-ignore>
+            <h4>Code Example (Not Processed)</h4>
+            <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>&lt;!-- Alpine.js Counter Example --&gt;
+&lt;div x-data="{ count: 0 }"&gt;
+    &lt;button @click="count++"&gt;+&lt;/button&gt;
+    &lt;span x-text="count"&gt;&lt;/span&gt;
+    &lt;button @click="count--"&gt;-&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+
+        <div class="box">
+            <h4>Live Demo (Processed)</h4>
+            <div x-data="{ count: 0 }">
+                <button @click="count++">+</button>
+                <span x-text="count" style="margin: 0 15px; font-size: 20px;"></span>
+                <button @click="count--">-</button>
+            </div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Perfect for documentation sites where you want to show code examples alongside working demos.
+    </div>
+
+    <h2>Example 6: Server-Rendered Content</h2>
+    <div class="demo" x-data="{ timestamp: new Date().toLocaleTimeString() }">
+        <div class="box">
+            <h4>Client-Side (Alpine)</h4>
+            <p>Current time: <span x-text="timestamp"></span></p>
+        </div>
+
+        <div class="box" x-ignore>
+            <h4>Server-Rendered (Ignored)</h4>
+            <p>Server timestamp: 2025-01-15 14:30:00</p>
+            <p>This content came from the server and doesn't need Alpine processing.</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use x-ignore for server-rendered content that doesn't require client-side interactivity.
+    </div>
+
+    <h2>Example 7: Nested Components</h2>
+    <div class="demo" x-data="{ outer: 'Outer Component' }">
+        <div class="box">
+            <p>Outer: <span x-text="outer"></span></p>
+
+            <div x-data="{ inner: 'Inner Component' }" class="box">
+                <p>Inner: <span x-text="inner"></span></p>
+                <p>Can access outer: <span x-text="outer"></span></p>
+
+                <div x-ignore>
+                    <p>Ignored area - x-text="inner" won't work: <span x-text="inner"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-ignore blocks Alpine processing for that element and all its descendants, regardless of nesting.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

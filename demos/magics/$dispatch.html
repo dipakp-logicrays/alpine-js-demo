@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$dispatch Magic Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .box { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .notification { position: fixed; top: 20px; right: 20px; background: #4caf50; color: white; padding: 15px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+    <h1>$dispatch Magic Property</h1>
+
+    <div class="explanation">
+        <strong>What is $dispatch?</strong>
+        <p>$dispatch creates and dispatches custom browser events. Enables communication between components without shared state. Events bubble up the DOM tree.</p>
+    </div>
+
+    <h2>Example 1: Basic Event Dispatch</h2>
+    <div class="demo" x-data="{ message: '' }" @notify="message = $event.detail">
+        <button @click="$dispatch('notify', 'Hello from button!')">Send Notification</button>
+        <p>Received: <span x-text="message || '(none)'"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $dispatch('notify', 'data') sends an event. @notify listens for it. $event.detail contains the data.
+    </div>
+
+    <h2>Example 2: Parent-Child Communication</h2>
+    <div class="demo" x-data="{ notifications: [] }" @alert="notifications.push($event.detail)">
+        <div class="box">
+            <h4>Parent Component</h4>
+            <p>Received <span x-text="notifications.length"></span> notifications:</p>
+            <ul>
+                <template x-for="(notif, index) in notifications" :key="index">
+                    <li x-text="notif"></li>
+                </template>
+            </ul>
+        </div>
+
+        <div class="box" x-data>
+            <h4>Child Component 1</h4>
+            <button @click="$dispatch('alert', 'Alert from Child 1')">Send Alert</button>
+        </div>
+
+        <div class="box" x-data>
+            <h4>Child Component 2</h4>
+            <button @click="$dispatch('alert', 'Alert from Child 2')">Send Alert</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Child components dispatch events that bubble up to parent. Parent listens and collects all alerts.
+    </div>
+
+    <h2>Example 3: Toast Notifications</h2>
+    <div class="demo" x-data="{
+        toasts: []
+    }" @toast.window="
+        toasts.push({ id: Date.now(), message: $event.detail });
+        setTimeout(() => toasts.shift(), 3000);
+    ">
+        <button @click="$dispatch('toast', 'Success! Operation completed.')">Show Success</button>
+        <button @click="$dispatch('toast', 'Warning! Check your input.')">Show Warning</button>
+        <button @click="$dispatch('toast', 'Error! Something went wrong.')">Show Error</button>
+
+        <div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+            <template x-for="toast in toasts" :key="toast.id">
+                <div x-transition class="box" style="margin-bottom: 10px; background: #333; color: white; min-width: 250px;">
+                    <span x-text="toast.message"></span>
+                </div>
+            </template>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> @toast.window listens globally. Any component can dispatch toast events. Auto-dismiss after 3 seconds.
+    </div>
+
+    <h2>Example 4: Form Submission Event</h2>
+    <div class="demo" x-data="{
+        submissions: []
+    }" @form-submit="submissions.push($event.detail)">
+        <div class="box">
+            <h4>Submission Log</h4>
+            <ul>
+                <template x-for="(sub, index) in submissions" :key="index">
+                    <li x-text="`${sub.name} (${sub.email})`"></li>
+                </template>
+            </ul>
+        </div>
+
+        <div class="box" x-data="{ name: '', email: '' }">
+            <h4>Contact Form</h4>
+            <input type="text" x-model="name" placeholder="Name" style="display: block; margin: 5px 0; padding: 8px;">
+            <input type="email" x-model="email" placeholder="Email" style="display: block; margin: 5px 0; padding: 8px;">
+            <button @click="$dispatch('form-submit', { name, email }); name = ''; email = '';">Submit</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Form dispatches submission event with data. Parent logs all submissions without direct data sharing.
+    </div>
+
+    <h2>Example 5: Modal System</h2>
+    <div class="demo" x-data="{
+        modals: []
+    }" @open-modal.window="modals.push($event.detail)" @close-modal.window="modals = modals.filter(m => m.id !== $event.detail)">
+        <button @click="$dispatch('open-modal', { id: Date.now(), title: 'Modal 1', content: 'Content for modal 1' })">
+            Open Modal 1
+        </button>
+        <button @click="$dispatch('open-modal', { id: Date.now(), title: 'Modal 2', content: 'Content for modal 2' })">
+            Open Modal 2
+        </button>
+
+        <template x-for="modal in modals" :key="modal.id">
+            <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+                <div @click.stop class="box" style="max-width: 400px;">
+                    <h3 x-text="modal.title" style="margin-top: 0;"></h3>
+                    <p x-text="modal.content"></p>
+                    <button @click="$dispatch('close-modal', modal.id)">Close</button>
+                </div>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Centralized modal system using events. Any component can open/close modals via dispatch.
+    </div>
+
+    <h2>Example 6: Shopping Cart Events</h2>
+    <div class="demo" x-data="{
+        cart: []
+    }" @add-to-cart="cart.push($event.detail)" @remove-from-cart="cart = cart.filter(item => item.id !== $event.detail)">
+        <div class="box">
+            <h4>Product List</h4>
+            <button @click="$dispatch('add-to-cart', { id: 1, name: 'Widget', price: 10 })">Add Widget</button>
+            <button @click="$dispatch('add-to-cart', { id: 2, name: 'Gadget', price: 25 })">Add Gadget</button>
+            <button @click="$dispatch('add-to-cart', { id: 3, name: 'Gizmo', price: 15 })">Add Gizmo</button>
+        </div>
+
+        <div class="box">
+            <h4>Cart (<span x-text="cart.length"></span> items)</h4>
+            <template x-if="cart.length === 0">
+                <p>Cart is empty</p>
+            </template>
+            <ul>
+                <template x-for="item in cart" :key="item.id">
+                    <li>
+                        <span x-text="item.name + ' - $' + item.price"></span>
+                        <button @click="$dispatch('remove-from-cart', item.id)">Remove</button>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Product components dispatch cart events. Cart component listens and updates. Decoupled architecture.
+    </div>
+
+    <h2>Example 7: Custom Event Data</h2>
+    <div class="demo" x-data="{ logs: [] }" @log-action="
+        logs.push({
+            action: $event.detail.action,
+            user: $event.detail.user,
+            time: $event.detail.time
+        });
+        if (logs.length > 5) logs.shift();
+    ">
+        <button @click="$dispatch('log-action', {
+            action: 'Button Clicked',
+            user: 'John Doe',
+            time: new Date().toLocaleTimeString()
+        })">Log Action 1</button>
+
+        <button @click="$dispatch('log-action', {
+            action: 'Form Submitted',
+            user: 'Jane Smith',
+            time: new Date().toLocaleTimeString()
+        })">Log Action 2</button>
+
+        <div class="box">
+            <h4>Activity Log</h4>
+            <ul style="font-family: monospace; font-size: 12px;">
+                <template x-for="(log, index) in logs" :key="index">
+                    <li>
+                        <span x-text="log.time"></span> -
+                        <strong x-text="log.action"></strong> by
+                        <span x-text="log.user"></span>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Dispatch complex objects with multiple properties. Great for structured event data.
+    </div>
+
+    <h2>Example 8: Event Bubbling Control</h2>
+    <div class="demo" x-data="{ events: [] }" @bubble-test="events.push('Caught at root')">
+        <div class="box" x-data @bubble-test="events.push('Caught at parent')">
+            <h4>Parent</h4>
+            <div class="box" x-data>
+                <h4>Child</h4>
+                <button @click="$dispatch('bubble-test')">Dispatch (Bubbles)</button>
+                <button @click="$dispatch('bubble-test', null, { bubbles: false })">Dispatch (No Bubble)</button>
+            </div>
+        </div>
+
+        <div class="box">
+            <h4>Events Caught:</h4>
+            <ul>
+                <template x-for="(event, index) in events" :key="index">
+                    <li x-text="event"></li>
+                </template>
+            </ul>
+            <button @click="events = []">Clear</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Control event bubbling with third parameter: { bubbles: false } stops propagation.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-model Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        input, textarea, select { padding: 8px; margin: 5px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-model Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-model?</strong>
+        <p>x-model creates two-way data binding between form inputs and Alpine data. Changes to the input update the data, and data changes update the input.</p>
+    </div>
+
+    <h2>Example 1: Text Input Binding</h2>
+    <div class="demo" x-data="{ name: '' }">
+        <input type="text" x-model="name" placeholder="Enter your name">
+        <p>Hello, <span x-text="name || 'stranger'"></span>!</p>
+        <p>Name length: <span x-text="name.length"></span> characters</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-model binds the input value to the name property. Typing updates name automatically.
+    </div>
+
+    <h2>Example 2: Checkbox Binding</h2>
+    <div class="demo" x-data="{ agreed: false, newsletter: true, notifications: false }">
+        <label>
+            <input type="checkbox" x-model="agreed">
+            I agree to the terms and conditions
+        </label>
+        <br>
+        <label>
+            <input type="checkbox" x-model="newsletter">
+            Subscribe to newsletter
+        </label>
+        <br>
+        <label>
+            <input type="checkbox" x-model="notifications">
+            Enable notifications
+        </label>
+
+        <h4>Current State:</h4>
+        <p>Terms agreed: <span x-text="agreed ? 'Yes' : 'No'"></span></p>
+        <p>Newsletter: <span x-text="newsletter ? 'Yes' : 'No'"></span></p>
+        <p>Notifications: <span x-text="notifications ? 'Yes' : 'No'"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-model with checkboxes creates boolean bindings. Checked = true, unchecked = false.
+    </div>
+
+    <h2>Example 3: Radio Button Binding</h2>
+    <div class="demo" x-data="{ size: 'medium', color: 'blue' }">
+        <h4>Select Size:</h4>
+        <label><input type="radio" x-model="size" value="small"> Small</label>
+        <label><input type="radio" x-model="size" value="medium"> Medium</label>
+        <label><input type="radio" x-model="size" value="large"> Large</label>
+
+        <h4>Select Color:</h4>
+        <label><input type="radio" x-model="color" value="red"> Red</label>
+        <label><input type="radio" x-model="color" value="blue"> Blue</label>
+        <label><input type="radio" x-model="color" value="green"> Green</label>
+
+        <h4>Your Selection:</h4>
+        <p>Size: <span x-text="size"></span></p>
+        <p>Color: <span x-text="color"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Radio buttons with x-model share the same variable. Only one can be selected at a time.
+    </div>
+
+    <h2>Example 4: Select Dropdown Binding</h2>
+    <div class="demo" x-data="{ country: 'us', cities: ['New York', 'Los Angeles', 'Chicago'] }">
+        <label>
+            Select Country:
+            <select x-model="country">
+                <option value="us">United States</option>
+                <option value="uk">United Kingdom</option>
+                <option value="ca">Canada</option>
+                <option value="au">Australia</option>
+            </select>
+        </label>
+
+        <p>Selected country: <span x-text="country"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-model works with select elements. The selected option's value is bound to the data.
+    </div>
+
+    <h2>Example 5: Multiple Select Binding</h2>
+    <div class="demo" x-data="{ interests: ['sports', 'music'] }">
+        <label>
+            Select your interests (hold Ctrl/Cmd to select multiple):
+            <select x-model="interests" multiple style="height: 100px; display: block; width: 200px;">
+                <option value="sports">Sports</option>
+                <option value="music">Music</option>
+                <option value="movies">Movies</option>
+                <option value="reading">Reading</option>
+                <option value="travel">Travel</option>
+            </select>
+        </label>
+
+        <h4>Selected Interests:</h4>
+        <ul>
+            <template x-for="interest in interests" :key="interest">
+                <li x-text="interest"></li>
+            </template>
+        </ul>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-model with multiple select creates an array of selected values.
+    </div>
+
+    <h2>Example 6: Textarea Binding</h2>
+    <div class="demo" x-data="{ comment: 'Write something...' }">
+        <textarea x-model="comment" rows="5" style="width: 100%;"></textarea>
+        <p>Character count: <span x-text="comment.length"></span></p>
+        <p>Word count: <span x-text="comment.trim().split(/\s+/).filter(w => w.length > 0).length"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-model binds textarea content. Useful for comments, descriptions, or any multi-line input.
+    </div>
+
+    <h2>Example 7: Number Modifier</h2>
+    <div class="demo" x-data="{ age: 25, quantity: 10 }">
+        <label>
+            Age (as number):
+            <input type="number" x-model.number="age">
+        </label>
+        <p>Age: <span x-text="age"></span> (Type: <span x-text="typeof age"></span>)</p>
+        <p>Age in 10 years: <span x-text="age + 10"></span></p>
+
+        <label>
+            Quantity:
+            <input type="range" x-model.number="quantity" min="0" max="100">
+        </label>
+        <p>Quantity: <span x-text="quantity"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> .number modifier converts input value to a number automatically. Without it, values are strings.
+    </div>
+
+    <h2>Example 8: Debounce Modifier</h2>
+    <div class="demo" x-data="{
+        search: '',
+        searchCount: 0,
+        performSearch() {
+            this.searchCount++;
+        }
+    }">
+        <h4>Without Debounce (updates immediately):</h4>
+        <input type="text" x-model="search" @input="performSearch()" placeholder="Type to search...">
+
+        <h4>With Debounce (updates after 500ms of no typing):</h4>
+        <input type="text" x-model.debounce.500ms="search" placeholder="Type to search...">
+
+        <p>Search term: <span x-text="search"></span></p>
+        <p>Search performed: <span x-text="searchCount"></span> times</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> .debounce modifier delays updates until user stops typing. Useful for search inputs or API calls.
+    </div>
+
+    <h2>Example 9: Lazy Modifier</h2>
+    <div class="demo" x-data="{
+        instant: '',
+        lazy: '',
+        instantUpdates: 0,
+        lazyUpdates: 0
+    }">
+        <h4>Instant Update (on input):</h4>
+        <input type="text" x-model="instant" @input="instantUpdates++" placeholder="Updates on every keystroke">
+        <p>Value: <span x-text="instant"></span> (Updates: <span x-text="instantUpdates"></span>)</p>
+
+        <h4>Lazy Update (on change/blur):</h4>
+        <input type="text" x-model.lazy="lazy" @change="lazyUpdates++" placeholder="Updates on blur">
+        <p>Value: <span x-text="lazy"></span> (Updates: <span x-text="lazyUpdates"></span>)</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> .lazy modifier updates data only when input loses focus (blur) or user presses Enter. Reduces updates for better performance.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

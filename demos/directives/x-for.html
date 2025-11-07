@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-for Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .card { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>x-for Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-for?</strong>
+        <p>x-for loops through arrays and creates DOM elements for each item. Must be used on a &lt;template&gt; tag and requires a :key attribute for tracking.</p>
+    </div>
+
+    <h2>Example 1: Simple List</h2>
+    <div class="demo" x-data="{
+        fruits: ['Apple', 'Banana', 'Orange', 'Grape', 'Mango']
+    }">
+        <h3>Fruit List</h3>
+        <ul>
+            <template x-for="fruit in fruits" :key="fruit">
+                <li x-text="fruit"></li>
+            </template>
+        </ul>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-for="fruit in fruits" iterates over the array. Each item gets its own &lt;li&gt; element. The :key helps Alpine track items.
+    </div>
+
+    <h2>Example 2: List with Index</h2>
+    <div class="demo" x-data="{
+        colors: ['Red', 'Blue', 'Green', 'Yellow', 'Purple']
+    }">
+        <h3>Colors with Index</h3>
+        <ul>
+            <template x-for="(color, index) in colors" :key="index">
+                <li>
+                    <span x-text="index + 1"></span>.
+                    <span x-text="color"></span>
+                </li>
+            </template>
+        </ul>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-for="(item, index) in array" provides both the item and its index. Index is zero-based.
+    </div>
+
+    <h2>Example 3: Dynamic List with Add/Remove</h2>
+    <div class="demo" x-data="{
+        tasks: ['Buy groceries', 'Walk the dog', 'Read a book'],
+        newTask: '',
+        addTask() {
+            if (this.newTask.trim()) {
+                this.tasks.push(this.newTask.trim());
+                this.newTask = '';
+            }
+        },
+        removeTask(index) {
+            this.tasks.splice(index, 1);
+        }
+    }">
+        <h3>Todo List</h3>
+        <input
+            type="text"
+            x-model="newTask"
+            @keyup.enter="addTask()"
+            placeholder="Add a task..."
+            style="width: 70%;"
+        >
+        <button @click="addTask()">Add</button>
+
+        <ul>
+            <template x-for="(task, index) in tasks" :key="index">
+                <li style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0;">
+                    <span x-text="task"></span>
+                    <button @click="removeTask(index)" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer;">Remove</button>
+                </li>
+            </template>
+        </ul>
+        <p>Total tasks: <span x-text="tasks.length"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-for updates automatically when the array changes. Adding or removing items re-renders the list.
+    </div>
+
+    <h2>Example 4: Looping Over Objects</h2>
+    <div class="demo" x-data="{
+        users: [
+            { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
+            { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
+            { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'Editor' }
+        ]
+    }">
+        <h3>User Directory</h3>
+        <template x-for="user in users" :key="user.id">
+            <div class="card">
+                <h4 x-text="user.name" style="margin: 0 0 10px 0;"></h4>
+                <p style="margin: 5px 0;">Email: <span x-text="user.email"></span></p>
+                <p style="margin: 5px 0;">Role: <span x-text="user.role"></span></p>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-for works with arrays of objects. Access object properties using dot notation (user.name).
+    </div>
+
+    <h2>Example 5: Nested Loops</h2>
+    <div class="demo" x-data="{
+        categories: [
+            { name: 'Fruits', items: ['Apple', 'Banana', 'Orange'] },
+            { name: 'Vegetables', items: ['Carrot', 'Broccoli', 'Spinach'] },
+            { name: 'Grains', items: ['Rice', 'Wheat', 'Oats'] }
+        ]
+    }">
+        <h3>Food Categories</h3>
+        <template x-for="category in categories" :key="category.name">
+            <div class="card">
+                <h4 x-text="category.name" style="margin: 0 0 10px 0;"></h4>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <template x-for="item in category.items" :key="item">
+                        <li x-text="item"></li>
+                    </template>
+                </ul>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-for can be nested. Each template tag creates its own loop scope.
+    </div>
+
+    <h2>Example 6: Filtering and Sorting</h2>
+    <div class="demo" x-data="{
+        products: [
+            { name: 'Laptop', price: 999, category: 'Electronics' },
+            { name: 'Mouse', price: 25, category: 'Electronics' },
+            { name: 'Desk', price: 350, category: 'Furniture' },
+            { name: 'Chair', price: 200, category: 'Furniture' },
+            { name: 'Keyboard', price: 75, category: 'Electronics' }
+        ],
+        filter: 'all',
+        sortBy: 'name',
+        get filteredProducts() {
+            let filtered = this.filter === 'all'
+                ? this.products
+                : this.products.filter(p => p.category === this.filter);
+
+            return filtered.sort((a, b) => {
+                if (this.sortBy === 'name') return a.name.localeCompare(b.name);
+                if (this.sortBy === 'price') return a.price - b.price;
+                return 0;
+            });
+        }
+    }">
+        <h3>Product Catalog</h3>
+        <div style="margin-bottom: 15px;">
+            <label>
+                Filter:
+                <select x-model="filter">
+                    <option value="all">All</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Furniture">Furniture</option>
+                </select>
+            </label>
+            <label style="margin-left: 15px;">
+                Sort by:
+                <select x-model="sortBy">
+                    <option value="name">Name</option>
+                    <option value="price">Price</option>
+                </select>
+            </label>
+        </div>
+
+        <template x-for="product in filteredProducts" :key="product.name">
+            <div class="card">
+                <h4 x-text="product.name" style="margin: 0;"></h4>
+                <p style="margin: 5px 0;">Price: $<span x-text="product.price"></span></p>
+                <p style="margin: 5px 0; font-size: 12px; color: #666;" x-text="product.category"></p>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use computed properties (getters) to filter and sort data before looping. The list updates automatically when filters change.
+    </div>
+
+    <h2>Example 7: Range Loop</h2>
+    <div class="demo" x-data="{ count: 5 }">
+        <label>
+            Number of items:
+            <input type="number" x-model.number="count" min="1" max="20">
+        </label>
+
+        <h3>Generated Items</h3>
+        <template x-for="i in count" :key="i">
+            <div class="card">
+                <p style="margin: 0;">Item #<span x-text="i"></span></p>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-for can loop over a number range. "i in 5" creates items from 1 to 5.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

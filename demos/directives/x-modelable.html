@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-modelable Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .custom-component { background: white; border: 2px solid #2196f3; border-radius: 8px; padding: 15px; margin: 10px 0; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-modelable Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-modelable?</strong>
+        <p>x-modelable makes a property of a child component available for two-way binding with x-model from a parent. It's used to create custom components that work with x-model.</p>
+    </div>
+
+    <h2>Example 1: Custom Counter Component</h2>
+    <div class="demo" x-data="{ count: 5 }">
+        <p>Parent count value: <span x-text="count"></span></p>
+
+        <!-- Custom counter component that can be x-modeled -->
+        <div x-data="{ internal: 0 }" x-modelable="internal" x-model="count" class="custom-component">
+            <h4>Custom Counter Component</h4>
+            <button @click="internal++">+</button>
+            <span x-text="internal" style="margin: 0 15px; font-size: 20px; font-weight: bold;"></span>
+            <button @click="internal--">-</button>
+            <p style="margin-top: 10px; font-size: 14px;">Internal value: <span x-text="internal"></span></p>
+        </div>
+
+        <button @click="count = 10">Set parent to 10</button>
+        <button @click="count = 0">Reset parent</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-modelable="internal" exposes the internal property. The parent can bind to it using x-model="count", creating two-way sync.
+    </div>
+
+    <h2>Example 2: Custom Color Picker</h2>
+    <div class="demo" x-data="{ selectedColor: '#3498db' }">
+        <p>Selected color in parent: <span x-text="selectedColor"></span></p>
+        <div :style="`background: ${selectedColor}; width: 100px; height: 100px; border-radius: 8px; margin: 10px 0;`"></div>
+
+        <!-- Custom color picker component -->
+        <div x-data="{
+            color: '#000000',
+            colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#34495e']
+        }" x-modelable="color" x-model="selectedColor" class="custom-component">
+            <h4>Color Picker Component</h4>
+            <div style="display: flex; gap: 10px;">
+                <template x-for="c in colors" :key="c">
+                    <div
+                        @click="color = c"
+                        :style="`background: ${c}; width: 40px; height: 40px; border-radius: 4px; cursor: pointer; border: 3px solid ${color === c ? '#000' : 'transparent'};`"
+                    ></div>
+                </template>
+            </div>
+            <input type="color" x-model="color" style="margin-top: 10px;">
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> The color picker component exposes its internal color state via x-modelable, allowing the parent to bind to it.
+    </div>
+
+    <h2>Example 3: Custom Toggle Switch</h2>
+    <div class="demo" x-data="{ isEnabled: true, isActive: false, isDarkMode: true }">
+        <h4>Parent State:</h4>
+        <p>Feature enabled: <span x-text="isEnabled ? 'Yes' : 'No'"></span></p>
+        <p>Active mode: <span x-text="isActive ? 'Yes' : 'No'"></span></p>
+        <p>Dark mode: <span x-text="isDarkMode ? 'Yes' : 'No'"></span></p>
+
+        <!-- Custom toggle component -->
+        <div x-data="{ checked: false }" x-modelable="checked" x-model="isEnabled" class="custom-component">
+            <h4>Feature Toggle</h4>
+            <div @click="checked = !checked" style="cursor: pointer; display: inline-flex; align-items: center;">
+                <div :style="`width: 50px; height: 24px; background: ${checked ? '#2196f3' : '#ccc'}; border-radius: 12px; position: relative; transition: all 0.3s;`">
+                    <div :style="`width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: ${checked ? '28px' : '2px'}; transition: all 0.3s;`"></div>
+                </div>
+                <span x-text="checked ? 'ON' : 'OFF'" style="margin-left: 10px; font-weight: bold;"></span>
+            </div>
+        </div>
+
+        <div x-data="{ checked: false }" x-modelable="checked" x-model="isActive" class="custom-component">
+            <h4>Active Mode Toggle</h4>
+            <div @click="checked = !checked" style="cursor: pointer; display: inline-flex; align-items: center;">
+                <div :style="`width: 50px; height: 24px; background: ${checked ? '#4caf50' : '#ccc'}; border-radius: 12px; position: relative; transition: all 0.3s;`">
+                    <div :style="`width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: ${checked ? '28px' : '2px'}; transition: all 0.3s;`"></div>
+                </div>
+                <span x-text="checked ? 'ACTIVE' : 'INACTIVE'" style="margin-left: 10px; font-weight: bold;"></span>
+            </div>
+        </div>
+
+        <div x-data="{ checked: false }" x-modelable="checked" x-model="isDarkMode" class="custom-component">
+            <h4>Dark Mode Toggle</h4>
+            <div @click="checked = !checked" style="cursor: pointer; display: inline-flex; align-items: center;">
+                <div :style="`width: 50px; height: 24px; background: ${checked ? '#673ab7' : '#ccc'}; border-radius: 12px; position: relative; transition: all 0.3s;`">
+                    <div :style="`width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: ${checked ? '28px' : '2px'}; transition: all 0.3s;`"></div>
+                </div>
+                <span x-text="checked ? '🌙' : '☀️'" style="margin-left: 10px; font-size: 20px;"></span>
+            </div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Multiple instances of the same component can be used with x-modelable, each binding to different parent properties.
+    </div>
+
+    <h2>Example 4: Custom Range Slider</h2>
+    <div class="demo" x-data="{ volume: 50, brightness: 75 }">
+        <h4>Parent State:</h4>
+        <p>Volume: <span x-text="volume"></span>%</p>
+        <p>Brightness: <span x-text="brightness"></span>%</p>
+
+        <!-- Custom slider component -->
+        <div x-data="{ value: 50 }" x-modelable="value" x-model="volume" class="custom-component">
+            <h4>Volume Control</h4>
+            <input type="range" x-model.number="value" min="0" max="100" style="width: 100%;">
+            <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                <button @click="value = 0">Mute</button>
+                <button @click="value = 50">50%</button>
+                <button @click="value = 100">Max</button>
+            </div>
+        </div>
+
+        <div x-data="{ value: 50 }" x-modelable="value" x-model="brightness" class="custom-component">
+            <h4>Brightness Control</h4>
+            <input type="range" x-model.number="value" min="0" max="100" style="width: 100%;">
+            <div :style="`width: ${value}%; height: 20px; background: linear-gradient(to right, #000, #fff); border-radius: 4px; margin-top: 10px;`"></div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-modelable enables creating reusable components with two-way data binding, just like native form inputs.
+    </div>
+
+    <h2>Example 5: Custom Tag Input</h2>
+    <div class="demo" x-data="{ tags: ['Alpine', 'JavaScript'] }">
+        <h4>Parent Tags:</h4>
+        <ul>
+            <template x-for="tag in tags" :key="tag">
+                <li x-text="tag"></li>
+            </template>
+        </ul>
+
+        <!-- Custom tag input component -->
+        <div x-data="{
+            items: [],
+            newTag: '',
+            addTag() {
+                if (this.newTag.trim() && !this.items.includes(this.newTag.trim())) {
+                    this.items.push(this.newTag.trim());
+                    this.newTag = '';
+                }
+            },
+            removeTag(index) {
+                this.items.splice(index, 1);
+            }
+        }" x-modelable="items" x-model="tags" class="custom-component">
+            <h4>Tag Input Component</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px;">
+                <template x-for="(tag, index) in items" :key="tag">
+                    <span style="background: #2196f3; color: white; padding: 5px 10px; border-radius: 15px; display: inline-flex; align-items: center;">
+                        <span x-text="tag"></span>
+                        <button @click="removeTag(index)" style="background: none; border: none; color: white; margin-left: 5px; cursor: pointer;">×</button>
+                    </span>
+                </template>
+            </div>
+            <input
+                type="text"
+                x-model="newTag"
+                @keyup.enter="addTag()"
+                placeholder="Type and press Enter"
+                style="padding: 8px; width: 100%;"
+            >
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Complex components like tag inputs can expose their data structure through x-modelable for parent binding.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-effect Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .log { background: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 4px; max-height: 150px; overflow-y: auto; margin: 10px 0; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>x-effect Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-effect?</strong>
+        <p>x-effect automatically re-runs code whenever its dependencies change. It's like a reactive watcher that executes side effects based on data changes.</p>
+    </div>
+
+    <h2>Example 1: Basic Effect</h2>
+    <div class="demo" x-data="{
+        count: 0,
+        doubled: 0
+    }" x-effect="doubled = count * 2">
+        <button @click="count++">Increment Count</button>
+        <p>Count: <span x-text="count"></span></p>
+        <p>Doubled (auto-calculated): <span x-text="doubled"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-effect="doubled = count * 2" automatically updates doubled whenever count changes.
+    </div>
+
+    <h2>Example 2: Logging Changes</h2>
+    <div class="demo" x-data="{
+        name: 'John',
+        age: 25,
+        logs: []
+    }" x-effect="logs.push(`Name changed to: ${name} (${new Date().toLocaleTimeString()})`)">
+        <input type="text" x-model="name" placeholder="Change name">
+        <input type="number" x-model.number="age" placeholder="Change age">
+
+        <h4>Change Log:</h4>
+        <div class="log">
+            <template x-for="(log, index) in logs" :key="index">
+                <div x-text="log"></div>
+            </template>
+        </div>
+        <button @click="logs = []">Clear Log</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-effect tracks dependencies (name) and runs whenever they change. Use it for logging, debugging, or side effects.
+    </div>
+
+    <h2>Example 3: LocalStorage Sync</h2>
+    <div class="demo" x-data="{
+        theme: localStorage.getItem('theme') || 'light',
+        fontSize: localStorage.getItem('fontSize') || '16'
+    }"
+    x-effect="localStorage.setItem('theme', theme)"
+    x-effect="localStorage.setItem('fontSize', fontSize)">
+        <h4>Preferences (Persisted to LocalStorage)</h4>
+        <label>
+            Theme:
+            <select x-model="theme">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="auto">Auto</option>
+            </select>
+        </label>
+        <br>
+        <label>
+            Font Size:
+            <select x-model="fontSize">
+                <option value="12">Small (12px)</option>
+                <option value="16">Medium (16px)</option>
+                <option value="20">Large (20px)</option>
+            </select>
+        </label>
+
+        <div :style="`background: ${theme === 'dark' ? '#333' : '#fff'}; color: ${theme === 'dark' ? '#fff' : '#000'}; padding: 15px; margin: 15px 0; border-radius: 4px; font-size: ${fontSize}px;`">
+            <p>Preview: This text reflects your preferences!</p>
+        </div>
+
+        <p style="font-size: 12px; color: #666;">Reload the page - your preferences are saved!</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Multiple x-effect directives can be used. Each saves its dependency to localStorage automatically when it changes.
+    </div>
+
+    <h2>Example 4: Dependent Calculations</h2>
+    <div class="demo" x-data="{
+        width: 10,
+        height: 5,
+        area: 0,
+        perimeter: 0
+    }"
+    x-effect="area = width * height"
+    x-effect="perimeter = 2 * (width + height)">
+        <h4>Rectangle Calculator</h4>
+        <label>
+            Width:
+            <input type="number" x-model.number="width" min="1">
+        </label>
+        <br>
+        <label>
+            Height:
+            <input type="number" x-model.number="height" min="1">
+        </label>
+
+        <div style="background: white; padding: 15px; margin: 15px 0; border-radius: 4px;">
+            <p>Area: <span x-text="area"></span> square units</p>
+            <p>Perimeter: <span x-text="perimeter"></span> units</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-effect automatically recalculates dependent values. Both area and perimeter update when width or height changes.
+    </div>
+
+    <h2>Example 5: API Calls on Data Change</h2>
+    <div class="demo" x-data="{
+        userId: 1,
+        user: null,
+        loading: false,
+        fetchCount: 0
+    }" x-effect="
+        if (userId > 0) {
+            loading = true;
+            fetchCount++;
+            fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
+                .then(r => r.json())
+                .then(data => {
+                    user = data;
+                    loading = false;
+                });
+        }
+    ">
+        <label>
+            Select User ID:
+            <select x-model.number="userId">
+                <option value="1">User 1</option>
+                <option value="2">User 2</option>
+                <option value="3">User 3</option>
+                <option value="4">User 4</option>
+                <option value="5">User 5</option>
+            </select>
+        </label>
+
+        <div x-show="loading">Loading...</div>
+
+        <div x-show="!loading && user" style="background: white; padding: 15px; margin: 15px 0; border-radius: 4px;">
+            <h4 x-text="user?.name"></h4>
+            <p>Email: <span x-text="user?.email"></span></p>
+            <p>Phone: <span x-text="user?.phone"></span></p>
+            <p>Website: <span x-text="user?.website"></span></p>
+        </div>
+
+        <p style="font-size: 12px; color: #666;">API calls made: <span x-text="fetchCount"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-effect can trigger API calls when dependencies change. The fetch runs automatically when userId changes.
+    </div>
+
+    <h2>Example 6: Console Logging for Debugging</h2>
+    <div class="demo" x-data="{
+        firstName: 'John',
+        lastName: 'Doe',
+        age: 30
+    }"
+    x-effect="console.log('Name changed:', firstName, lastName)"
+    x-effect="console.log('Age changed:', age)">
+        <h4>Form Data (Check browser console)</h4>
+        <input type="text" x-model="firstName" placeholder="First Name">
+        <input type="text" x-model="lastName" placeholder="Last Name">
+        <input type="number" x-model.number="age" placeholder="Age">
+
+        <div style="background: #fff3cd; padding: 15px; margin: 15px 0; border-radius: 4px;">
+            <strong>Open your browser console (F12) to see x-effect logging!</strong>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-effect is useful for debugging. Log data changes to console to track how data flows through your application.
+    </div>
+
+    <h2>Example 7: Conditional Effects</h2>
+    <div class="demo" x-data="{
+        enabled: true,
+        counter: 0,
+        effectRuns: 0
+    }" x-effect="if (enabled) { effectRuns++; console.log('Counter:', counter); }">
+        <label>
+            <input type="checkbox" x-model="enabled">
+            Enable Effect
+        </label>
+        <br>
+        <button @click="counter++">Increment Counter</button>
+        <button @click="counter = 0">Reset Counter</button>
+
+        <div style="margin: 15px 0;">
+            <p>Counter: <span x-text="counter"></span></p>
+            <p>Effect runs: <span x-text="effectRuns"></span></p>
+            <p>Effect enabled: <span x-text="enabled ? 'Yes' : 'No'"></span></p>
+        </div>
+
+        <p style="font-size: 12px; color: #666;">When disabled, changing counter won't trigger the effect</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-effect can contain conditional logic. The effect only executes its side effects when the condition is true, but still tracks all dependencies.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

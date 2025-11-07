@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$id Magic Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; cursor: pointer; }
+        input, textarea, select { padding: 8px; width: 100%; max-width: 400px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>$id Magic Property</h1>
+
+    <div class="explanation">
+        <strong>What is $id?</strong>
+        <p>$id generates unique IDs for elements within a component scope. Used with x-id directive to create accessible forms, ARIA relationships, and prevent ID conflicts in reusable components.</p>
+    </div>
+
+    <h2>Example 1: Basic Label-Input Association</h2>
+    <div class="demo" x-data x-id="['email']">
+        <div class="form-group">
+            <label :for="$id('email')">Email Address (click me to focus input)</label>
+            <input type="email" :id="$id('email')" placeholder="Enter your email">
+        </div>
+        <p style="font-size: 12px; color: #666;">Click the label to see it focus the input - this works because of matching IDs</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-id declares scope, $id generates unique ID. Label's for attribute matches input's id for accessibility.
+    </div>
+
+    <h2>Example 2: Form with Multiple Fields</h2>
+    <div class="demo" x-data x-id="['name', 'email', 'phone', 'message']">
+        <div class="form-group">
+            <label :for="$id('name')">Full Name</label>
+            <input type="text" :id="$id('name')" placeholder="John Doe">
+        </div>
+
+        <div class="form-group">
+            <label :for="$id('email')">Email</label>
+            <input type="email" :id="$id('email')" placeholder="john@example.com">
+        </div>
+
+        <div class="form-group">
+            <label :for="$id('phone')">Phone</label>
+            <input type="tel" :id="$id('phone')" placeholder="(555) 123-4567">
+        </div>
+
+        <div class="form-group">
+            <label :for="$id('message')">Message</label>
+            <textarea :id="$id('message')" rows="4" placeholder="Your message..."></textarea>
+        </div>
+
+        <button>Submit</button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Multiple $id calls create unique IDs for each field. All labels properly associated with inputs.
+    </div>
+
+    <h2>Example 3: Reusable Form Component</h2>
+    <div class="demo">
+        <h4>Contact Form 1</h4>
+        <div x-data x-id="['username', 'password']" style="background: white; padding: 15px; margin: 10px 0; border-radius: 4px;">
+            <div class="form-group">
+                <label :for="$id('username')">Username</label>
+                <input type="text" :id="$id('username')">
+            </div>
+            <div class="form-group">
+                <label :for="$id('password')">Password</label>
+                <input type="password" :id="$id('password')">
+            </div>
+        </div>
+
+        <h4>Contact Form 2 (Same structure, different IDs)</h4>
+        <div x-data x-id="['username', 'password']" style="background: white; padding: 15px; margin: 10px 0; border-radius: 4px;">
+            <div class="form-group">
+                <label :for="$id('username')">Username</label>
+                <input type="text" :id="$id('username')">
+            </div>
+            <div class="form-group">
+                <label :for="$id('password')">Password</label>
+                <input type="password" :id="$id('password')">
+            </div>
+        </div>
+
+        <p style="font-size: 12px; color: #666;">Inspect elements - both forms use same x-id names but get unique IDs (e.g., username-1 and username-2)</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Component reuse doesn't cause ID conflicts. Each instance gets unique IDs automatically.
+    </div>
+
+    <h2>Example 4: ARIA Descriptions</h2>
+    <div class="demo" x-data="{ showHelp: false }" x-id="['password', 'password-help']">
+        <div class="form-group">
+            <label :for="$id('password')">Password</label>
+            <input
+                type="password"
+                :id="$id('password')"
+                :aria-describedby="$id('password-help')"
+                @focus="showHelp = true"
+                @blur="showHelp = false"
+                placeholder="Enter password"
+            >
+            <small :id="$id('password-help')" style="display: block; margin-top: 5px; color: #666;">
+                Must be at least 8 characters with letters and numbers
+            </small>
+        </div>
+        <p x-show="showHelp" style="font-size: 12px; color: #2196f3;">
+            Screen readers will announce the help text when input is focused
+        </p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $id with aria-describedby creates accessible relationships. Screen readers announce descriptions.
+    </div>
+
+    <h2>Example 5: Radio Button Groups</h2>
+    <div class="demo" x-data="{ color: 'blue' }" x-id="['red', 'blue', 'green']">
+        <fieldset style="border: 1px solid #ddd; padding: 15px; border-radius: 4px;">
+            <legend>Choose your favorite color</legend>
+
+            <div style="margin: 10px 0;">
+                <input type="radio" :id="$id('red')" value="red" name="color" x-model="color">
+                <label :for="$id('red')">Red</label>
+            </div>
+
+            <div style="margin: 10px 0;">
+                <input type="radio" :id="$id('blue')" value="blue" name="color" x-model="color">
+                <label :for="$id('blue')">Blue</label>
+            </div>
+
+            <div style="margin: 10px 0;">
+                <input type="radio" :id="$id('green')" value="green" name="color" x-model="color">
+                <label :for="$id('green')">Green</label>
+            </div>
+        </fieldset>
+
+        <p>Selected: <span x-text="color"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $id makes radio button labels clickable. Each radio gets unique ID with same name attribute for grouping.
+    </div>
+
+    <h2>Example 6: Checkbox Lists</h2>
+    <div class="demo" x-data="{ hobbies: [] }" x-id="['reading', 'gaming', 'cooking', 'sports']">
+        <fieldset style="border: 1px solid #ddd; padding: 15px; border-radius: 4px;">
+            <legend>Select your hobbies</legend>
+
+            <div style="margin: 10px 0;">
+                <input type="checkbox" :id="$id('reading')" value="reading" x-model="hobbies">
+                <label :for="$id('reading')">Reading</label>
+            </div>
+
+            <div style="margin: 10px 0;">
+                <input type="checkbox" :id="$id('gaming')" value="gaming" x-model="hobbies">
+                <label :for="$id('gaming')">Gaming</label>
+            </div>
+
+            <div style="margin: 10px 0;">
+                <input type="checkbox" :id="$id('cooking')" value="cooking" x-model="hobbies">
+                <label :for="$id('cooking')">Cooking</label>
+            </div>
+
+            <div style="margin: 10px 0;">
+                <input type="checkbox" :id="$id('sports')" value="sports" x-model="hobbies">
+                <label :for="$id('sports')">Sports</label>
+            </div>
+        </fieldset>
+
+        <p>Selected: <span x-text="hobbies.join(', ') || 'None'"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Each checkbox gets unique ID via $id. Labels are fully accessible and clickable.
+    </div>
+
+    <h2>Example 7: Tabs with ARIA</h2>
+    <div class="demo" x-data="{ activeTab: 'home' }" x-id="['home-tab', 'profile-tab', 'settings-tab', 'home-panel', 'profile-panel', 'settings-panel']">
+        <div role="tablist" style="border-bottom: 2px solid #ddd; margin-bottom: 15px;">
+            <button
+                :id="$id('home-tab')"
+                :aria-controls="$id('home-panel')"
+                :aria-selected="activeTab === 'home'"
+                @click="activeTab = 'home'"
+                role="tab"
+                :style="activeTab === 'home' ? 'background: #2196f3; color: white;' : 'background: #f5f5f5;'"
+                style="border: none; padding: 10px 20px; cursor: pointer;"
+            >
+                Home
+            </button>
+            <button
+                :id="$id('profile-tab')"
+                :aria-controls="$id('profile-panel')"
+                :aria-selected="activeTab === 'profile'"
+                @click="activeTab = 'profile'"
+                role="tab"
+                :style="activeTab === 'profile' ? 'background: #2196f3; color: white;' : 'background: #f5f5f5;'"
+                style="border: none; padding: 10px 20px; cursor: pointer;"
+            >
+                Profile
+            </button>
+            <button
+                :id="$id('settings-tab')"
+                :aria-controls="$id('settings-panel')"
+                :aria-selected="activeTab === 'settings'"
+                @click="activeTab = 'settings'"
+                role="tab"
+                :style="activeTab === 'settings' ? 'background: #2196f3; color: white;' : 'background: #f5f5f5;'"
+                style="border: none; padding: 10px 20px; cursor: pointer;"
+            >
+                Settings
+            </button>
+        </div>
+
+        <div :id="$id('home-panel')" role="tabpanel" :aria-labelledby="$id('home-tab')" x-show="activeTab === 'home'" style="padding: 15px; background: white; border-radius: 4px;">
+            <h4>Home Panel</h4>
+            <p>Welcome to the home tab!</p>
+        </div>
+
+        <div :id="$id('profile-panel')" role="tabpanel" :aria-labelledby="$id('profile-tab')" x-show="activeTab === 'profile'" style="padding: 15px; background: white; border-radius: 4px;">
+            <h4>Profile Panel</h4>
+            <p>Your profile information goes here.</p>
+        </div>
+
+        <div :id="$id('settings-panel')" role="tabpanel" :aria-labelledby="$id('settings-tab')" x-show="activeTab === 'settings'" style="padding: 15px; background: white; border-radius: 4px;">
+            <h4>Settings Panel</h4>
+            <p>Application settings are here.</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $id creates proper ARIA relationships for tabs. Fully accessible tab interface with unique IDs.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

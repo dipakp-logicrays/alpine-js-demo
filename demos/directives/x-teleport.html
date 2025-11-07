@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-teleport Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; position: relative; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        #modals { position: fixed; inset: 0; pointer-events: none; z-index: 1000; }
+        #notifications { position: fixed; top: 20px; right: 20px; z-index: 2000; pointer-events: none; }
+        #tooltips { position: fixed; inset: 0; pointer-events: none; z-index: 1500; }
+    </style>
+</head>
+<body>
+    <!-- Teleport targets -->
+    <div id="modals"></div>
+    <div id="notifications"></div>
+    <div id="tooltips"></div>
+
+    <h1>x-teleport Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-teleport?</strong>
+        <p>x-teleport moves an element to a different location in the DOM while maintaining its Alpine.js context. Perfect for modals, notifications, and tooltips.</p>
+    </div>
+
+    <h2>Example 1: Basic Modal</h2>
+    <div class="demo" x-data="{ open: false }">
+        <button @click="open = true">Open Modal</button>
+
+        <template x-teleport="#modals">
+            <div x-show="open" x-transition style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; pointer-events: auto;" @click="open = false">
+                <div @click.stop style="background: white; padding: 30px; border-radius: 8px; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                    <h3 style="margin-top: 0;">Modal Title</h3>
+                    <p>This modal is teleported to #modals at the end of the body, but still has access to the component's data.</p>
+                    <button @click="open = false">Close</button>
+                </div>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-teleport="#modals" moves the modal to the #modals container, allowing it to overlay everything with proper z-index.
+    </div>
+
+    <h2>Example 2: Notification System</h2>
+    <div class="demo" x-data="{
+        notifications: [],
+        addNotification(message, type = 'info') {
+            const id = Date.now();
+            this.notifications.push({ id, message, type });
+            setTimeout(() => {
+                this.notifications = this.notifications.filter(n => n.id !== id);
+            }, 3000);
+        }
+    }">
+        <button @click="addNotification('Success!', 'success')">Show Success</button>
+        <button @click="addNotification('Warning!', 'warning')">Show Warning</button>
+        <button @click="addNotification('Error!', 'error')">Show Error</button>
+        <button @click="addNotification('Info message', 'info')">Show Info</button>
+
+        <template x-teleport="#notifications">
+            <div style="pointer-events: auto;">
+                <template x-for="notification in notifications" :key="notification.id">
+                    <div
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 transform translate-x-full"
+                        x-transition:enter-end="opacity-100 transform translate-x-0"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        :style="`background: ${
+                            notification.type === 'success' ? '#4caf50' :
+                            notification.type === 'warning' ? '#ff9800' :
+                            notification.type === 'error' ? '#f44336' : '#2196f3'
+                        }; color: white; padding: 15px 20px; border-radius: 4px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);`"
+                    >
+                        <span x-text="notification.message"></span>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Notifications are teleported to top-right corner. They auto-dismiss after 3 seconds and slide in/out smoothly.
+    </div>
+
+    <h2>Example 3: Multiple Modals</h2>
+    <div class="demo" x-data="{ modal1: false, modal2: false }">
+        <button @click="modal1 = true">Open Modal 1</button>
+        <button @click="modal2 = true">Open Modal 2</button>
+
+        <template x-teleport="#modals">
+            <div x-show="modal1" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; pointer-events: auto; z-index: 1000;" @click="modal1 = false">
+                <div @click.stop style="background: white; padding: 30px; border-radius: 8px; max-width: 400px;">
+                    <h3 style="margin-top: 0; color: #2196f3;">First Modal</h3>
+                    <p>This is the first modal.</p>
+                    <button @click="modal2 = true">Open Modal 2 from here</button>
+                    <button @click="modal1 = false">Close</button>
+                </div>
+            </div>
+        </template>
+
+        <template x-teleport="#modals">
+            <div x-show="modal2" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; pointer-events: auto; z-index: 1001;" @click="modal2 = false">
+                <div @click.stop style="background: white; padding: 30px; border-radius: 8px; max-width: 400px;">
+                    <h3 style="margin-top: 0; color: #4caf50;">Second Modal</h3>
+                    <p>This is the second modal, layered on top!</p>
+                    <button @click="modal2 = false">Close</button>
+                </div>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Multiple teleports to the same target work fine. Use z-index to control stacking order.
+    </div>
+
+    <h2>Example 4: Confirm Dialog</h2>
+    <div class="demo" x-data="{
+        showConfirm: false,
+        confirmMessage: '',
+        confirmAction: null,
+        confirm(message, action) {
+            this.confirmMessage = message;
+            this.confirmAction = action;
+            this.showConfirm = true;
+        },
+        handleConfirm() {
+            if (this.confirmAction) this.confirmAction();
+            this.showConfirm = false;
+        },
+        handleCancel() {
+            this.showConfirm = false;
+        }
+    }">
+        <button @click="confirm('Delete this item?', () => alert('Item deleted!'))">Delete Item</button>
+        <button @click="confirm('Log out?', () => alert('Logged out!'))">Logout</button>
+
+        <template x-teleport="#modals">
+            <div x-show="showConfirm" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <div style="background: white; padding: 30px; border-radius: 8px; max-width: 400px; text-align: center;">
+                    <h3 style="margin-top: 0;">Confirm Action</h3>
+                    <p x-text="confirmMessage"></p>
+                    <div>
+                        <button @click="handleConfirm()" style="background: #f44336; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 4px;">Confirm</button>
+                        <button @click="handleCancel()" style="background: #9e9e9e; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 4px;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Reusable confirm dialog pattern using x-teleport. Callbacks allow different actions for different confirms.
+    </div>
+
+    <h2>Example 5: Dropdown Menu (Teleported)</h2>
+    <div class="demo" x-data="{ open: false, selectedItem: 'None' }">
+        <div style="position: relative;">
+            <button @click="open = !open">
+                Menu: <span x-text="selectedItem"></span> ▼
+            </button>
+
+            <template x-teleport="body">
+                <div
+                    x-show="open"
+                    @click.outside="open = false"
+                    style="position: absolute; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 150px; z-index: 1000;"
+                >
+                    <div @click="selectedItem = 'Option 1'; open = false" style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee;">Option 1</div>
+                    <div @click="selectedItem = 'Option 2'; open = false" style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee;">Option 2</div>
+                    <div @click="selectedItem = 'Option 3'; open = false" style="padding: 10px; cursor: pointer;">Option 3</div>
+                </div>
+            </template>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Teleporting dropdowns to body prevents overflow issues from parent containers with overflow: hidden.
+    </div>
+
+    <h2>Example 6: Loading Overlay</h2>
+    <div class="demo" x-data="{
+        loading: false,
+        simulateLoad() {
+            this.loading = true;
+            setTimeout(() => { this.loading = false; }, 2000);
+        }
+    }">
+        <button @click="simulateLoad()">Start Loading</button>
+
+        <template x-teleport="#modals">
+            <div x-show="loading" style="position: fixed; inset: 0; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <div style="text-align: center;">
+                    <div style="border: 4px solid #f3f3f3; border-top: 4px solid #2196f3; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                    <p style="margin-top: 20px; font-size: 18px;">Loading...</p>
+                </div>
+            </div>
+        </template>
+    </div>
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <div class="explanation">
+        <strong>Explanation:</strong> Full-screen loading overlays benefit from x-teleport to ensure they cover the entire viewport.
+    </div>
+
+    <h2>Example 7: Toast Notifications</h2>
+    <div class="demo" x-data="{
+        toasts: [],
+        showToast(message) {
+            const id = Date.now();
+            this.toasts.push({ id, message });
+            setTimeout(() => {
+                this.toasts = this.toasts.filter(t => t.id !== id);
+            }, 2000);
+        }
+    }">
+        <button @click="showToast('Item added to cart')">Add to Cart</button>
+        <button @click="showToast('Settings saved')">Save Settings</button>
+        <button @click="showToast('File uploaded')">Upload File</button>
+
+        <template x-teleport="body">
+            <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; pointer-events: none;">
+                <template x-for="toast in toasts" :key="toast.id">
+                    <div
+                        x-transition
+                        style="background: #333; color: white; padding: 15px 25px; border-radius: 25px; margin-top: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); pointer-events: auto;"
+                    >
+                        <span x-text="toast.message"></span>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Toast notifications appear at bottom-center, teleported to body for proper positioning outside component hierarchy.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

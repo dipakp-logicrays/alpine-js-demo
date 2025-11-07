@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-html Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        .warning { background: #fff3cd; padding: 15px; margin: 10px 0; border-left: 4px solid #ffc107; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-html Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-html?</strong>
+        <p>x-html sets the inner HTML of an element. Unlike x-text, it renders HTML tags. Use with caution - only with trusted content!</p>
+    </div>
+
+    <div class="warning">
+        <strong>⚠ Security Warning:</strong>
+        <p>NEVER use x-html with user input! It can lead to XSS (Cross-Site Scripting) attacks. Only use with sanitized or trusted HTML.</p>
+    </div>
+
+    <h2>Example 1: Basic HTML Rendering</h2>
+    <div class="demo" x-data="{
+        htmlContent: '<strong>Bold text</strong>, <em>italic text</em>, and <u>underlined text</u>'
+    }">
+        <div style="background: white; padding: 15px; border: 1px solid #ddd;" x-html="htmlContent"></div>
+        <p style="margin-top: 10px;">The HTML tags are rendered, not shown as text.</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-html renders HTML tags. The strong, em, and u tags are displayed as formatted text.
+    </div>
+
+    <h2>Example 2: Dynamic HTML Content</h2>
+    <div class="demo" x-data="{
+        contentType: 'heading',
+        getContent() {
+            switch(this.contentType) {
+                case 'heading':
+                    return '<h3 style=\"color: blue;\">This is a Heading</h3>';
+                case 'list':
+                    return '<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>';
+                case 'paragraph':
+                    return '<p style=\"color: green; font-size: 18px;\">This is a styled paragraph with <strong>bold text</strong>.</p>';
+                case 'table':
+                    return '<table border=\"1\" style=\"width: 100%; border-collapse: collapse;\"><tr><th>Name</th><th>Age</th></tr><tr><td>John</td><td>30</td></tr><tr><td>Jane</td><td>25</td></tr></table>';
+                default:
+                    return '<p>Select a content type</p>';
+            }
+        }
+    }">
+        <button @click="contentType = 'heading'">Show Heading</button>
+        <button @click="contentType = 'list'">Show List</button>
+        <button @click="contentType = 'paragraph'">Show Paragraph</button>
+        <button @click="contentType = 'table'">Show Table</button>
+
+        <div style="background: white; padding: 15px; margin: 15px 0; border: 1px solid #ddd;" x-html="getContent()"></div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-html can render different HTML structures dynamically. Click buttons to switch between different content types.
+    </div>
+
+    <h2>Example 3: Rich Text Editor Output</h2>
+    <div class="demo" x-data="{
+        articles: [
+            {
+                title: 'Article 1',
+                content: '<h4>Introduction</h4><p>This is the first paragraph with <strong>important</strong> information.</p><p>Second paragraph with a <a href=\"#\">link</a>.</p>'
+            },
+            {
+                title: 'Article 2',
+                content: '<h4>Features</h4><ul><li>Feature one with <em>emphasis</em></li><li>Feature two</li><li>Feature three</li></ul>'
+            },
+            {
+                title: 'Article 3',
+                content: '<h4>Conclusion</h4><p>Final thoughts with <mark>highlighted text</mark> and <code>code snippets</code>.</p>'
+            }
+        ],
+        selectedArticle: 0
+    }">
+        <div>
+            <button
+                x-for="(article, index) in articles"
+                @click="selectedArticle = index"
+                x-text="article.title"
+                :style="selectedArticle === index ? 'background: #2196f3; color: white;' : ''"
+            ></button>
+        </div>
+
+        <div style="background: white; padding: 20px; margin: 15px 0; border: 1px solid #ddd; min-height: 150px;" x-html="articles[selectedArticle].content"></div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-html is useful for displaying rich text content from CMSs or databases that store formatted HTML.
+    </div>
+
+    <h2>Example 4: SVG and Icon Rendering</h2>
+    <div class="demo" x-data="{
+        icons: {
+            heart: '<svg width=\"50\" height=\"50\" viewBox=\"0 0 24 24\" fill=\"red\"><path d=\"M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z\"/></svg>',
+            star: '<svg width=\"50\" height=\"50\" viewBox=\"0 0 24 24\" fill=\"gold\"><path d=\"M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z\"/></svg>',
+            check: '<svg width=\"50\" height=\"50\" viewBox=\"0 0 24 24\" fill=\"green\"><path d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\"/></svg>'
+        },
+        currentIcon: 'heart'
+    }">
+        <button @click="currentIcon = 'heart'">Heart</button>
+        <button @click="currentIcon = 'star'">Star</button>
+        <button @click="currentIcon = 'check'">Check</button>
+
+        <div style="background: white; padding: 20px; margin: 15px 0; border: 1px solid #ddd; text-align: center;" x-html="icons[currentIcon]"></div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-html can render SVG markup, useful for displaying icons or graphics dynamically.
+    </div>
+
+    <h2>Example 5: Comparison with x-text</h2>
+    <div class="demo" x-data="{
+        content: '<h3>Heading</h3><p>Paragraph with <strong>bold</strong> text.</p>'
+    }">
+        <h4>With x-text (escapes HTML):</h4>
+        <div style="background: #ffebee; padding: 15px; border: 1px solid #ef5350;" x-text="content"></div>
+
+        <h4 style="margin-top: 20px;">With x-html (renders HTML):</h4>
+        <div style="background: #e8f5e9; padding: 15px; border: 1px solid #66bb6a;" x-html="content"></div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-text shows HTML as plain text (safe), while x-html renders it (powerful but risky with untrusted content).
+    </div>
+
+    <h2>Example 6: Loading External Content</h2>
+    <div class="demo" x-data="{
+        htmlContent: '<p>Click the button to load content...</p>',
+        loading: false,
+        loadContent() {
+            this.loading = true;
+            setTimeout(() => {
+                this.htmlContent = `
+                    <div style=\"background: #f0f0f0; padding: 15px; border-radius: 4px;\">
+                        <h4 style=\"margin-top: 0;\">Loaded Content</h4>
+                        <p>This content was loaded dynamically.</p>
+                        <ul>
+                            <li>Data point 1</li>
+                            <li>Data point 2</li>
+                            <li>Data point 3</li>
+                        </ul>
+                        <p><em>Loaded at: ${new Date().toLocaleTimeString()}</em></p>
+                    </div>
+                `;
+                this.loading = false;
+            }, 1500);
+        }
+    }">
+        <button @click="loadContent()" :disabled="loading">
+            <span x-text="loading ? 'Loading...' : 'Load Content'"></span>
+        </button>
+
+        <div style="margin: 15px 0; min-height: 100px;" x-html="htmlContent"></div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-html can display dynamically loaded HTML content, such as from API responses (ensure content is sanitized!).
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

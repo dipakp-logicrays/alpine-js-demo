@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-show Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .alert { padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-show Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-show?</strong>
+        <p>x-show toggles element visibility using CSS display property. The element remains in the DOM but is hidden/shown. Unlike x-if, it doesn't add/remove elements.</p>
+    </div>
+
+    <h2>Example 1: Simple Toggle</h2>
+    <div class="demo" x-data="{ isVisible: true }">
+        <button @click="isVisible = !isVisible">Toggle Content</button>
+        <p x-show="isVisible">This content can be toggled on and off!</p>
+        <p>Current state: <span x-text="isVisible ? 'Visible' : 'Hidden'"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-show="isVisible" shows the element when isVisible is true, hides it when false. The element stays in the DOM.
+    </div>
+
+    <h2>Example 2: Conditional Messages</h2>
+    <div class="demo" x-data="{ messageType: 'success' }">
+        <div>
+            <button @click="messageType = 'success'">Success</button>
+            <button @click="messageType = 'warning'">Warning</button>
+            <button @click="messageType = 'danger'">Danger</button>
+            <button @click="messageType = 'none'">Hide All</button>
+        </div>
+        <div class="alert alert-success" x-show="messageType === 'success'">
+            ✓ Operation completed successfully!
+        </div>
+        <div class="alert alert-warning" x-show="messageType === 'warning'">
+            ⚠ Please review your input!
+        </div>
+        <div class="alert alert-danger" x-show="messageType === 'danger'">
+            ✗ An error occurred!
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Multiple elements can use x-show with different conditions. Only one message shows at a time based on messageType.
+    </div>
+
+    <h2>Example 3: Form Validation</h2>
+    <div class="demo" x-data="{
+        email: '',
+        password: '',
+        showErrors: false,
+        isEmailValid() {
+            return this.email.includes('@') && this.email.length > 5;
+        },
+        isPasswordValid() {
+            return this.password.length >= 8;
+        }
+    }">
+        <h3>Sign Up Form</h3>
+        <input type="email" x-model="email" placeholder="Email" style="display: block; margin: 10px 0; padding: 8px; width: 100%;">
+        <p x-show="showErrors && !isEmailValid()" style="color: red; margin: 5px 0;">
+            ✗ Please enter a valid email address
+        </p>
+
+        <input type="password" x-model="password" placeholder="Password" style="display: block; margin: 10px 0; padding: 8px; width: 100%;">
+        <p x-show="showErrors && !isPasswordValid()" style="color: red; margin: 5px 0;">
+            ✗ Password must be at least 8 characters
+        </p>
+
+        <button @click="showErrors = true">Validate</button>
+        <button @click="showErrors = false; email = ''; password = ''">Reset</button>
+
+        <p x-show="showErrors && isEmailValid() && isPasswordValid()" style="color: green; margin: 10px 0;">
+            ✓ All fields are valid!
+        </p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-show can use methods and complex expressions. Error messages only appear after clicking "Validate" and when fields are invalid.
+    </div>
+
+    <h2>Example 4: Loading States</h2>
+    <div class="demo" x-data="{
+        loading: false,
+        data: null,
+        fetchData() {
+            this.loading = true;
+            this.data = null;
+            setTimeout(() => {
+                this.data = { items: ['Item 1', 'Item 2', 'Item 3'] };
+                this.loading = false;
+            }, 2000);
+        }
+    }">
+        <button @click="fetchData()" :disabled="loading">Load Data</button>
+        <p x-show="loading">Loading... Please wait.</p>
+        <div x-show="!loading && data">
+            <h4>Data Loaded:</h4>
+            <ul>
+                <template x-for="item in data?.items" :key="item">
+                    <li x-text="item"></li>
+                </template>
+            </ul>
+        </div>
+        <p x-show="!loading && !data">Click the button to load data</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-show manages different UI states: loading, loaded with data, and initial state. Each state shows different content.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

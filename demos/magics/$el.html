@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$el Magic Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .box { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>$el Magic Property</h1>
+
+    <div class="explanation">
+        <strong>What is $el?</strong>
+        <p>$el is a magic property that references the current element where the Alpine directive is placed. It gives you direct access to the DOM element.</p>
+    </div>
+
+    <h2>Example 1: Accessing Element Properties</h2>
+    <div class="demo">
+        <div x-data="{ info: '' }" class="box">
+            <button @click="info = `Tag: ${$el.tagName}, ID: ${$el.id || 'none'}, Classes: ${$el.className}`">
+                Get Element Info
+            </button>
+            <p x-text="info || 'Click the button'"></p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $el gives access to the element. You can read properties like tagName, id, className, etc.
+    </div>
+
+    <h2>Example 2: Manipulating Styles</h2>
+    <div class="demo" x-data="{}">
+        <div class="box">
+            <button @click="$el.style.background = 'red'; $el.style.color = 'white'">Make Red</button>
+            <button @click="$el.style.background = 'blue'; $el.style.color = 'white'">Make Blue</button>
+            <button @click="$el.style.background = 'green'; $el.style.color = 'white'">Make Green</button>
+            <button @click="$el.style.background = ''; $el.style.color = ''">Reset</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $el.style allows direct CSS manipulation. Changes apply immediately to the element.
+    </div>
+
+    <h2>Example 3: Adding/Removing Classes</h2>
+    <div class="demo" x-data="{}">
+        <style>
+            .highlight { background: yellow; padding: 10px; }
+            .bold { font-weight: bold; }
+            .large { font-size: 20px; }
+        </style>
+        <div class="box">
+            <p>Modify this text:</p>
+            <button @click="$el.parentElement.querySelector('p').classList.toggle('highlight')">Toggle Highlight</button>
+            <button @click="$el.parentElement.querySelector('p').classList.toggle('bold')">Toggle Bold</button>
+            <button @click="$el.parentElement.querySelector('p').classList.toggle('large')">Toggle Large</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use $el to navigate DOM and manipulate classes with classList methods.
+    </div>
+
+    <h2>Example 4: Scrolling to Element</h2>
+    <div class="demo" x-data="{}">
+        <button @click="$el.parentElement.querySelector('#target').scrollIntoView({ behavior: 'smooth' })">
+            Scroll to Target
+        </button>
+
+        <div style="height: 300px; overflow-y: auto; border: 1px solid #ddd; margin: 10px 0; padding: 10px;">
+            <div style="height: 200px;">Scroll down...</div>
+            <div id="target" style="background: yellow; padding: 15px; border-radius: 4px;">
+                <strong>Target Element!</strong>
+            </div>
+            <div style="height: 200px;">More content...</div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $el combined with DOM traversal enables smooth scrolling and navigation.
+    </div>
+
+    <h2>Example 5: Getting Dimensions</h2>
+    <div class="demo" x-data="{ width: 0, height: 0 }">
+        <div class="box">
+            <button @click="width = $el.offsetWidth; height = $el.offsetHeight">
+                Get Button Size
+            </button>
+            <p>Button width: <span x-text="width || 'Click to measure'"></span>px</p>
+            <p>Button height: <span x-text="height || 'Click to measure'"></span>px</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $el provides access to size properties: offsetWidth, offsetHeight, clientWidth, clientHeight.
+    </div>
+
+    <h2>Example 6: Element Position</h2>
+    <div class="demo" x-data="{ x: 0, y: 0 }">
+        <div class="box">
+            <button @click="const rect = $el.getBoundingClientRect(); x = rect.left; y = rect.top;">
+                Get Button Position
+            </button>
+            <p>X position: <span x-text="x || 'Click to get'"></span>px</p>
+            <p>Y position: <span x-text="y || 'Click to get'"></span>px</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use $el.getBoundingClientRect() to get element position and dimensions relative to viewport.
+    </div>
+
+    <h2>Example 7: Focus Management</h2>
+    <div class="demo" x-data="{ focused: false }">
+        <div class="box">
+            <button @click="$el.nextElementSibling.focus()">Focus Input</button>
+            <input
+                type="text"
+                @focus="focused = true"
+                @blur="focused = false"
+                placeholder="Click button to focus me"
+                style="display: block; margin: 10px 0; padding: 8px;"
+            >
+            <p>Input focused: <span x-text="focused ? 'Yes' : 'No'"></span></p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $el can access siblings (nextElementSibling, previousElementSibling) to control focus.
+    </div>
+
+    <h2>Example 8: Custom Attributes</h2>
+    <div class="demo" x-data="{ value: '' }">
+        <div class="box">
+            <button
+                @click="$el.setAttribute('data-clicked', 'true'); value = $el.getAttribute('data-clicked')"
+                data-clicked="false"
+            >
+                Click to Set Attribute
+            </button>
+            <p>data-clicked attribute: <span x-text="value || 'Not clicked yet'"></span></p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $el.setAttribute() and $el.getAttribute() work with data attributes and custom attributes.
+    </div>
+
+    <h2>Example 9: Text Content Manipulation</h2>
+    <div class="demo" x-data="{}">
+        <div class="box">
+            <p id="text">Original text content</p>
+            <button @click="$el.previousElementSibling.textContent = 'Text changed!'">Change Text</button>
+            <button @click="$el.previousElementSibling.previousElementSibling.textContent = 'Original text content'">Reset</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $el enables DOM traversal to modify textContent of related elements.
+    </div>
+
+    <h2>Example 10: Cloning Elements</h2>
+    <div class="demo" x-data="{ cloneCount: 0 }">
+        <div class="box" id="clone-container">
+            <div class="box" style="background: #e3f2fd;">
+                Original Box #<span x-text="cloneCount"></span>
+            </div>
+            <button @click="
+                const clone = $el.previousElementSibling.cloneNode(true);
+                cloneCount++;
+                clone.querySelector('span').textContent = cloneCount;
+                $el.parentElement.insertBefore(clone, $el);
+            ">Clone Box</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $el combined with DOM methods like cloneNode() and insertBefore() enables dynamic element creation.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$store Magic Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .box { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('counter', {
+                count: 0,
+                increment() { this.count++ },
+                decrement() { this.count-- }
+            });
+
+            Alpine.store('user', {
+                name: 'Guest',
+                isLoggedIn: false,
+                login(name) {
+                    this.name = name;
+                    this.isLoggedIn = true;
+                },
+                logout() {
+                    this.name = 'Guest';
+                    this.isLoggedIn = false;
+                }
+            });
+
+            Alpine.store('cart', {
+                items: [],
+                get total() {
+                    return this.items.reduce((sum, item) => sum + item.price, 0);
+                },
+                add(item) {
+                    this.items.push(item);
+                },
+                remove(index) {
+                    this.items.splice(index, 1);
+                },
+                clear() {
+                    this.items = [];
+                }
+            });
+
+            Alpine.store('theme', {
+                current: 'light',
+                toggle() {
+                    this.current = this.current === 'light' ? 'dark' : 'light';
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>$store Magic Property</h1>
+
+    <div class="explanation">
+        <strong>What is $store?</strong>
+        <p>$store provides global state management accessible across all components. Define stores with Alpine.store() and access them anywhere with $store.storeName.</p>
+    </div>
+
+    <h2>Example 1: Simple Counter Store</h2>
+    <div class="demo" x-data>
+        <div class="box">
+            <h4>Counter Component 1</h4>
+            <p>Count: <span x-text="$store.counter.count"></span></p>
+            <button @click="$store.counter.increment()">+</button>
+            <button @click="$store.counter.decrement()">-</button>
+        </div>
+
+        <div class="box">
+            <h4>Counter Component 2</h4>
+            <p>Same count: <span x-text="$store.counter.count"></span></p>
+            <button @click="$store.counter.count = 0">Reset</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Both components share the same counter store. Changes in one component instantly reflect in the other.
+    </div>
+
+    <h2>Example 2: User Authentication Store</h2>
+    <div class="demo" x-data>
+        <div class="box">
+            <h4>Header Component</h4>
+            <p>Welcome, <span x-text="$store.user.name"></span>!</p>
+            <template x-if="$store.user.isLoggedIn">
+                <button @click="$store.user.logout()">Logout</button>
+            </template>
+        </div>
+
+        <div class="box">
+            <h4>Login Component</h4>
+            <template x-if="!$store.user.isLoggedIn">
+                <div>
+                    <input type="text" x-ref="username" placeholder="Enter username">
+                    <button @click="$store.user.login($refs.username.value)">Login</button>
+                </div>
+            </template>
+            <template x-if="$store.user.isLoggedIn">
+                <p>You are logged in as: <span x-text="$store.user.name"></span></p>
+            </template>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> User store manages authentication state globally. Login/logout affects all components using $store.user.
+    </div>
+
+    <h2>Example 3: Shopping Cart Store</h2>
+    <div class="demo" x-data>
+        <div class="box">
+            <h4>Product List</h4>
+            <button @click="$store.cart.add({ name: 'Widget', price: 10 })">Add Widget ($10)</button>
+            <button @click="$store.cart.add({ name: 'Gadget', price: 25 })">Add Gadget ($25)</button>
+            <button @click="$store.cart.add({ name: 'Gizmo', price: 15 })">Add Gizmo ($15)</button>
+        </div>
+
+        <div class="box">
+            <h4>Shopping Cart (<span x-text="$store.cart.items.length"></span> items)</h4>
+            <template x-if="$store.cart.items.length === 0">
+                <p>Cart is empty</p>
+            </template>
+            <template x-if="$store.cart.items.length > 0">
+                <div>
+                    <ul>
+                        <template x-for="(item, index) in $store.cart.items" :key="index">
+                            <li>
+                                <span x-text="item.name"></span> - $<span x-text="item.price"></span>
+                                <button @click="$store.cart.remove(index)" style="margin-left: 10px;">Remove</button>
+                            </li>
+                        </template>
+                    </ul>
+                    <p><strong>Total: $<span x-text="$store.cart.total"></span></strong></p>
+                    <button @click="$store.cart.clear()">Clear Cart</button>
+                </div>
+            </template>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Cart store with computed property (total). Products added anywhere appear in cart component.
+    </div>
+
+    <h2>Example 4: Theme Store</h2>
+    <div class="demo" x-data :style="$store.theme.current === 'dark' ? 'background: #333; color: white;' : ''">
+        <div class="box" :style="$store.theme.current === 'dark' ? 'background: #444; color: white; border-color: #555;' : ''">
+            <h4>Theme Switcher</h4>
+            <p>Current theme: <span x-text="$store.theme.current"></span></p>
+            <button @click="$store.theme.toggle()">Toggle Theme</button>
+        </div>
+
+        <div class="box" :style="$store.theme.current === 'dark' ? 'background: #444; color: white; border-color: #555;' : ''">
+            <p>This component also responds to theme changes!</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Theme store allows global theme switching. All components using $store.theme update automatically.
+    </div>
+
+    <h2>Example 5: Creating Store at Runtime</h2>
+    <div class="demo" x-data="{
+        createTodoStore() {
+            if (!Alpine.store('todos')) {
+                Alpine.store('todos', {
+                    items: [],
+                    add(text) {
+                        this.items.push({ id: Date.now(), text, done: false });
+                    },
+                    toggle(id) {
+                        const item = this.items.find(i => i.id === id);
+                        if (item) item.done = !item.done;
+                    },
+                    remove(id) {
+                        this.items = this.items.filter(i => i.id !== id);
+                    }
+                });
+            }
+        }
+    }" x-init="createTodoStore()">
+        <div class="box">
+            <h4>Todo List (Dynamic Store)</h4>
+            <input type="text" x-ref="todoInput" placeholder="Add todo" @keyup.enter="$store.todos.add($refs.todoInput.value); $refs.todoInput.value = ''">
+            <button @click="$store.todos.add($refs.todoInput.value); $refs.todoInput.value = ''">Add</button>
+
+            <ul style="list-style: none; padding: 0;">
+                <template x-for="item in $store.todos.items" :key="item.id">
+                    <li style="margin: 10px 0;">
+                        <input type="checkbox" :checked="item.done" @change="$store.todos.toggle(item.id)">
+                        <span :style="item.done ? 'text-decoration: line-through; color: #999;' : ''" x-text="item.text"></span>
+                        <button @click="$store.todos.remove(item.id)" style="margin-left: 10px;">Delete</button>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Stores can be created dynamically at runtime using Alpine.store() in x-init or methods.
+    </div>
+
+    <h2>Example 6: Store with Watchers</h2>
+    <div class="demo" x-data="{
+        notifications: []
+    }" x-init="
+        $watch('$store.counter.count', (value) => {
+            notifications.push(`Counter changed to: ${value}`);
+            if (notifications.length > 5) notifications.shift();
+        });
+    ">
+        <div class="box">
+            <h4>Counter: <span x-text="$store.counter.count"></span></h4>
+            <button @click="$store.counter.increment()">+</button>
+            <button @click="$store.counter.decrement()">-</button>
+        </div>
+
+        <div class="box">
+            <h4>Notifications</h4>
+            <ul>
+                <template x-for="(notification, index) in notifications" :key="index">
+                    <li x-text="notification"></li>
+                </template>
+            </ul>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use $watch with $store to react to store changes. Useful for logging or triggering side effects.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

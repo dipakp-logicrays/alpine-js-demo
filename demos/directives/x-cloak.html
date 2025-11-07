@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-cloak Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        .box { background: white; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-cloak Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-cloak?</strong>
+        <p>x-cloak hides elements until Alpine.js is fully loaded and initialized. Prevents flashing of uninitialized content (FOUC). Requires CSS: [x-cloak] { display: none !important; }</p>
+    </div>
+
+    <h2>Example 1: Basic Cloak</h2>
+    <div class="demo">
+        <div class="box" x-data="{ message: 'Alpine is loaded!' }" x-cloak>
+            <p x-text="message"></p>
+            <p>This content was hidden until Alpine initialized.</p>
+        </div>
+        <p style="font-size: 12px; color: #666;">Without x-cloak, you might see "x-text=" flash before Alpine loads</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-cloak keeps the element hidden until Alpine removes the attribute after initialization.
+    </div>
+
+    <h2>Example 2: Without Cloak (Flash Demo)</h2>
+    <div class="demo">
+        <div class="box" x-data="{ count: 0 }">
+            <p>Count: <span x-text="count"></span></p>
+            <p style="color: #e74c3c;">Notice: Without x-cloak, x-text="count" might briefly appear before Alpine loads on slow connections</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Without x-cloak, raw Alpine directives may be visible for a split second during page load.
+    </div>
+
+    <h2>Example 3: Hiding Initialization State</h2>
+    <div class="demo" x-data="{
+        loading: true,
+        data: null
+    }" x-init="
+        setTimeout(() => {
+            data = { name: 'John Doe', email: 'john@example.com' };
+            loading = false;
+        }, 1000)
+    ">
+        <div x-show="!loading" x-cloak>
+            <div class="box">
+                <h4>User Data</h4>
+                <p>Name: <span x-text="data?.name"></span></p>
+                <p>Email: <span x-text="data?.email"></span></p>
+            </div>
+        </div>
+
+        <div x-show="loading" class="box">
+            <p>Loading data...</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-cloak with x-show prevents showing empty templates before data loads. Shows loading state first.
+    </div>
+
+    <h2>Example 4: Template Variables</h2>
+    <div class="demo" x-data="{
+        user: { firstName: 'Jane', lastName: 'Smith' },
+        items: ['Apple', 'Banana', 'Orange']
+    }">
+        <div class="box" x-cloak>
+            <h4>Profile</h4>
+            <p>Welcome, <span x-text="user.firstName + ' ' + user.lastName"></span>!</p>
+
+            <h4>Your Items</h4>
+            <ul>
+                <template x-for="item in items" :key="item">
+                    <li x-text="item"></li>
+                </template>
+            </ul>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use x-cloak on containers with complex templates to avoid showing unprocessed template syntax.
+    </div>
+
+    <h2>Example 5: Conditional Content</h2>
+    <div class="demo" x-data="{
+        isLoggedIn: true,
+        username: 'johndoe'
+    }">
+        <div x-cloak>
+            <div x-show="isLoggedIn" class="box">
+                <p>Welcome back, <span x-text="username"></span>!</p>
+                <button @click="isLoggedIn = false">Logout</button>
+            </div>
+
+            <div x-show="!isLoggedIn" class="box">
+                <p>Please log in to continue</p>
+                <button @click="isLoggedIn = true">Login</button>
+            </div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-cloak prevents flashing both login and logout states before Alpine determines which to show.
+    </div>
+
+    <h2>Example 6: Complex Initialization</h2>
+    <div class="demo" x-data="{
+        config: null,
+        init() {
+            // Simulate loading config from API
+            setTimeout(() => {
+                this.config = {
+                    theme: 'dark',
+                    language: 'en',
+                    notifications: true
+                };
+            }, 500);
+        }
+    }">
+        <div x-show="config" x-cloak class="box">
+            <h4>Application Settings</h4>
+            <p>Theme: <span x-text="config?.theme"></span></p>
+            <p>Language: <span x-text="config?.language"></span></p>
+            <p>Notifications: <span x-text="config?.notifications ? 'Enabled' : 'Disabled'"></span></p>
+        </div>
+
+        <div x-show="!config" class="box">
+            <p>Initializing application...</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-cloak is useful when components need async initialization to prevent showing incomplete state.
+    </div>
+
+    <h2>Example 7: Form with Default Values</h2>
+    <div class="demo" x-data="{
+        form: {
+            name: 'John Doe',
+            email: 'john@example.com',
+            country: 'US',
+            newsletter: true
+        }
+    }">
+        <div class="box" x-cloak>
+            <h4>User Profile Form</h4>
+            <input type="text" x-model="form.name" placeholder="Name" style="display: block; width: 100%; margin: 5px 0; padding: 8px;">
+            <input type="email" x-model="form.email" placeholder="Email" style="display: block; width: 100%; margin: 5px 0; padding: 8px;">
+            <select x-model="form.country" style="display: block; width: 100%; margin: 5px 0; padding: 8px;">
+                <option value="US">United States</option>
+                <option value="UK">United Kingdom</option>
+                <option value="CA">Canada</option>
+            </select>
+            <label style="display: block; margin: 10px 0;">
+                <input type="checkbox" x-model="form.newsletter">
+                Subscribe to newsletter
+            </label>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-cloak prevents form fields from briefly showing empty before default values are applied.
+    </div>
+
+    <h2>Example 8: Multiple Components</h2>
+    <div class="demo">
+        <div x-data="{ count: 0 }" x-cloak class="box">
+            <h4>Counter 1</h4>
+            <button @click="count++">Count: <span x-text="count"></span></button>
+        </div>
+
+        <div x-data="{ items: ['A', 'B', 'C'] }" x-cloak class="box">
+            <h4>List</h4>
+            <template x-for="item in items" :key="item">
+                <span x-text="item" style="margin-right: 10px;"></span>
+            </template>
+        </div>
+
+        <div x-data="{ show: true }" x-cloak class="box">
+            <h4>Toggle</h4>
+            <button @click="show = !show">Toggle</button>
+            <p x-show="show">Visible content!</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Apply x-cloak to each component that needs to hide initialization. Each component unhides independently after its data loads.
+    </div>
+
+    <div class="explanation" style="background: #fff3cd; border-left-color: #ffc107;">
+        <strong>Important Setup:</strong>
+        <p>x-cloak requires CSS in your stylesheet:</p>
+        <pre style="background: white; padding: 10px; border-radius: 4px; margin: 10px 0;">[x-cloak] { display: none !important; }</pre>
+        <p>This CSS is already included in this demo page's &lt;style&gt; tag.</p>
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

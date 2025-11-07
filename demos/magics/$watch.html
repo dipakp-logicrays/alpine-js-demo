@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$watch Magic Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; }
+        .log { background: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 4px; max-height: 150px; overflow-y: auto; margin: 10px 0; font-family: monospace; font-size: 12px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>$watch Magic Property</h1>
+
+    <div class="explanation">
+        <strong>What is $watch?</strong>
+        <p>$watch monitors data properties and executes a callback when they change. Perfect for triggering side effects, validation, or synchronization.</p>
+    </div>
+
+    <h2>Example 1: Basic Watch</h2>
+    <div class="demo" x-data="{
+        count: 0,
+        changes: 0
+    }" x-init="$watch('count', () => changes++)">
+        <button @click="count++">Increment Count</button>
+        <button @click="count--">Decrement Count</button>
+        <p>Count: <span x-text="count"></span></p>
+        <p>Number of changes: <span x-text="changes"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $watch('count', callback) executes callback whenever count changes. Useful for tracking modifications.
+    </div>
+
+    <h2>Example 2: Watch with Old and New Values</h2>
+    <div class="demo" x-data="{
+        value: 5,
+        log: []
+    }" x-init="$watch('value', (newVal, oldVal) => {
+        log.push(`Changed from ${oldVal} to ${newVal}`);
+        if (log.length > 5) log.shift();
+    })">
+        <input type="number" x-model.number="value">
+        <button @click="value += 10">+10</button>
+        <button @click="value -= 10">-10</button>
+
+        <h4>Change Log:</h4>
+        <div class="log">
+            <template x-for="(entry, index) in log" :key="index">
+                <div x-text="entry"></div>
+            </template>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Watch callback receives new and old values. Perfect for logging or comparing changes.
+    </div>
+
+    <h2>Example 3: Auto-Save with Watch</h2>
+    <div class="demo" x-data="{
+        content: 'Edit this text...',
+        lastSaved: null,
+        saveStatus: 'Not saved'
+    }" x-init="
+        $watch('content', () => {
+            saveStatus = 'Saving...';
+            setTimeout(() => {
+                localStorage.setItem('autosave', content);
+                lastSaved = new Date().toLocaleTimeString();
+                saveStatus = 'Saved';
+            }, 500);
+        });
+        content = localStorage.getItem('autosave') || content;
+    ">
+        <textarea x-model="content" rows="5" style="width: 100%; padding: 10px;"></textarea>
+        <p>Status: <span x-text="saveStatus"></span></p>
+        <p x-show="lastSaved">Last saved: <span x-text="lastSaved"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Watch triggers auto-save to localStorage whenever content changes. Simulates auto-saving behavior.
+    </div>
+
+    <h2>Example 4: Form Validation on Change</h2>
+    <div class="demo" x-data="{
+        email: '',
+        emailError: '',
+        password: '',
+        passwordError: ''
+    }" x-init="
+        $watch('email', (value) => {
+            emailError = !value.includes('@') && value.length > 0
+                ? 'Invalid email format'
+                : '';
+        });
+        $watch('password', (value) => {
+            passwordError = value.length > 0 && value.length < 8
+                ? 'Password must be at least 8 characters'
+                : '';
+        });
+    ">
+        <input type="email" x-model="email" placeholder="Email" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
+        <p x-show="emailError" style="color: red; margin: 0;" x-text="emailError"></p>
+
+        <input type="password" x-model="password" placeholder="Password" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
+        <p x-show="passwordError" style="color: red; margin: 0;" x-text="passwordError"></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Watch validates fields in real-time as user types. Error messages update automatically.
+    </div>
+
+    <h2>Example 5: Watching Nested Properties</h2>
+    <div class="demo" x-data="{
+        user: {
+            name: 'John',
+            age: 25,
+            city: 'NYC'
+        },
+        changes: []
+    }" x-init="
+        $watch('user.name', (val) => changes.push(`Name changed to: ${val}`));
+        $watch('user.age', (val) => changes.push(`Age changed to: ${val}`));
+        $watch('user.city', (val) => changes.push(`City changed to: ${val}`));
+    ">
+        <input type="text" x-model="user.name" placeholder="Name">
+        <input type="number" x-model.number="user.age" placeholder="Age">
+        <input type="text" x-model="user.city" placeholder="City">
+
+        <h4>Changes:</h4>
+        <div class="log">
+            <template x-for="(change, index) in changes" :key="index">
+                <div x-text="change"></div>
+            </template>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Watch nested properties with dot notation (user.name, user.age). Each property can have its own watcher.
+    </div>
+
+    <h2>Example 6: Conditional Side Effects</h2>
+    <div class="demo" x-data="{
+        temperature: 20,
+        alerts: []
+    }" x-init="
+        $watch('temperature', (temp) => {
+            if (temp > 30) {
+                alerts.push(`⚠️ High temperature: ${temp}°C`);
+            } else if (temp < 10) {
+                alerts.push(`❄️ Low temperature: ${temp}°C`);
+            }
+            if (alerts.length > 5) alerts.shift();
+        });
+    ">
+        <input type="range" x-model.number="temperature" min="0" max="50" style="width: 100%;">
+        <p>Temperature: <span x-text="temperature"></span>°C</p>
+
+        <h4>Alerts:</h4>
+        <div class="log">
+            <template x-for="(alert, index) in alerts" :key="index">
+                <div x-text="alert"></div>
+            </template>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Watch can contain conditional logic to trigger side effects only when specific conditions are met.
+    </div>
+
+    <h2>Example 7: Synchronizing Multiple Values</h2>
+    <div class="demo" x-data="{
+        celsius: 0,
+        fahrenheit: 32
+    }" x-init="
+        $watch('celsius', (c) => {
+            fahrenheit = (c * 9/5) + 32;
+        });
+        $watch('fahrenheit', (f) => {
+            celsius = (f - 32) * 5/9;
+        });
+    ">
+        <label>
+            Celsius:
+            <input type="number" x-model.number="celsius" step="0.1">
+        </label>
+        <label>
+            Fahrenheit:
+            <input type="number" x-model.number="fahrenheit" step="0.1">
+        </label>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Bidirectional watch keeps celsius and fahrenheit synchronized. Changing either updates the other.
+    </div>
+
+    <h2>Example 8: Debounced API Calls</h2>
+    <div class="demo" x-data="{
+        search: '',
+        results: [],
+        loading: false,
+        searchTimeout: null
+    }" x-init="
+        $watch('search', (value) => {
+            if (searchTimeout) clearTimeout(searchTimeout);
+
+            if (value.length < 3) {
+                results = [];
+                return;
+            }
+
+            loading = true;
+            searchTimeout = setTimeout(() => {
+                fetch(`https://jsonplaceholder.typicode.com/users?q=${value}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        results = data.slice(0, 5);
+                        loading = false;
+                    });
+            }, 500);
+        });
+    ">
+        <input type="text" x-model="search" placeholder="Search users (min 3 chars)" style="width: 100%; padding: 10px;">
+
+        <p x-show="loading">Searching...</p>
+
+        <ul>
+            <template x-for="result in results" :key="result.id">
+                <li x-text="result.name + ' (' + result.email + ')'"></li>
+            </template>
+        </ul>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Watch with debouncing prevents excessive API calls. Only searches after user stops typing for 500ms.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

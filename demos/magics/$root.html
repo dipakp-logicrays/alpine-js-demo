@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$root Magic Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .box { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
+        .nested { margin-left: 20px; border-left: 3px solid #2196f3; padding-left: 15px; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>$root Magic Property</h1>
+
+    <div class="explanation">
+        <strong>What is $root?</strong>
+        <p>$root references the root DOM element of the current Alpine component (element with x-data). Useful for accessing the component container from nested elements.</p>
+    </div>
+
+    <h2>Example 1: Access Root Element</h2>
+    <div class="demo" x-data="{ message: 'Root component' }">
+        <div class="box" style="background: #e3f2fd;">
+            <p x-text="message"></p>
+            <button @click="alert('Root tag: ' + $root.tagName)">Show Root Tag</button>
+            <button @click="$root.style.background = '#fff3cd'">Change Root Background</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $root gives access to the component's root element. Can read properties or modify styles.
+    </div>
+
+    <h2>Example 2: Nested Component Access</h2>
+    <div class="demo" x-data="{ parentData: 'Parent value' }">
+        <div class="box">
+            <h4>Parent Component</h4>
+            <p x-text="parentData"></p>
+
+            <div class="nested" x-data="{ childData: 'Child value' }">
+                <h4>Child Component</h4>
+                <p>Child data: <span x-text="childData"></span></p>
+                <p>Parent data: <span x-text="parentData"></span></p>
+                <button @click="alert('Child root: ' + $root.tagName + ', Parent root: ' + $root.parentElement.closest('[x-data]').tagName)">
+                    Show Roots
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Each component has its own $root. Nested components can access their root and navigate to parent roots.
+    </div>
+
+    <h2>Example 3: Apply Classes to Root</h2>
+    <div class="demo" x-data="{ highlighted: false }">
+        <div class="box" x-effect="$root.classList.toggle('highlight', highlighted)">
+            <style>.highlight { background: yellow !important; border: 2px solid orange !important; }</style>
+            <p>Toggle highlighting on root element</p>
+            <button @click="highlighted = !highlighted">Toggle Highlight</button>
+            <p>Highlighted: <span x-text="highlighted ? 'Yes' : 'No'"></span></p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $root.classList modifies root element classes. x-effect reactively updates based on data.
+    </div>
+
+    <h2>Example 4: Count Child Elements</h2>
+    <div class="demo" x-data="{
+        items: ['Item 1', 'Item 2', 'Item 3'],
+        count: 0,
+        countChildren() {
+            this.count = this.$root.querySelectorAll('li').length;
+        }
+    }" x-init="countChildren()">
+        <div class="box">
+            <ul>
+                <template x-for="item in items" :key="item">
+                    <li x-text="item"></li>
+                </template>
+            </ul>
+            <button @click="items.push(`Item ${items.length + 1}`); $nextTick(() => countChildren())">Add Item</button>
+            <button @click="items.pop(); $nextTick(() => countChildren())">Remove Item</button>
+            <p>Total list items in root: <span x-text="count"></span></p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $root.querySelectorAll() finds elements within the component root. Useful for counting or batch operations.
+    </div>
+
+    <h2>Example 5: Component Boundaries</h2>
+    <div class="demo" x-data="{ color: 'blue' }">
+        <div class="box">
+            <h4>Component A (color: <span x-text="color"></span>)</h4>
+            <button @click="$root.style.borderColor = color; color = color === 'blue' ? 'red' : 'blue'">
+                Change Root Border
+            </button>
+        </div>
+
+        <div class="box" x-data="{ color: 'green' }">
+            <h4>Component B (separate root)</h4>
+            <p>This is a separate component with its own $root</p>
+            <button @click="$root.style.borderColor = color">Apply Green Border to This Root</button>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Each x-data creates a new component with its own $root. $root always refers to the nearest component root.
+    </div>
+
+    <h2>Example 6: Scroll Root Into View</h2>
+    <div class="demo">
+        <div style="height: 400px; overflow-y: auto; border: 1px solid #ddd;">
+            <div style="height: 200px; background: #f0f0f0; padding: 20px;">
+                <p>Scroll down to find the component...</p>
+            </div>
+
+            <div class="box" x-data="{}">
+                <h4>Target Component</h4>
+                <button @click="$root.scrollIntoView({ behavior: 'smooth', block: 'center' })">
+                    Scroll Root to Center
+                </button>
+            </div>
+
+            <div style="height: 200px; background: #f0f0f0; padding: 20px;">
+                <p>More content below...</p>
+            </div>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $root.scrollIntoView() scrolls the component root into viewport. Useful for navigation and focus management.
+    </div>
+
+    <h2>Example 7: Data Attributes on Root</h2>
+    <div class="demo" x-data="{
+        status: 'idle',
+        setStatus(newStatus) {
+            this.status = newStatus;
+            this.$root.setAttribute('data-status', newStatus);
+        }
+    }">
+        <div class="box">
+            <button @click="setStatus('loading')">Set Loading</button>
+            <button @click="setStatus('success')">Set Success</button>
+            <button @click="setStatus('error')">Set Error</button>
+            <button @click="setStatus('idle')">Set Idle</button>
+
+            <p>Status: <span x-text="status"></span></p>
+            <p>Check DevTools - root has data-status attribute!</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $root.setAttribute() adds data attributes to component root. Useful for CSS selectors or testing.
+    </div>
+
+    <h2>Example 8: Remove Root Component</h2>
+    <div class="demo" x-data="{ components: [1, 2, 3] }">
+        <template x-for="id in components" :key="id">
+            <div class="box" x-data>
+                <h4>Component <span x-text="id"></span></h4>
+                <button @click="$root.remove()">Remove This Component</button>
+            </div>
+        </template>
+
+        <p>Components remaining: <span x-text="components.length"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $root.remove() removes the entire component from DOM. Each component can remove itself.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

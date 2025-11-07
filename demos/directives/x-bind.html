@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-bind Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; }
+        .box { padding: 20px; margin: 10px 0; border: 2px solid; transition: all 0.3s; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>x-bind Directive</h1>
+
+    <div class="explanation">
+        <strong>What is x-bind?</strong>
+        <p>x-bind dynamically binds HTML attributes to Alpine data. Shorthand: use colon (:) instead of x-bind:. Example: :class or :href instead of x-bind:class.</p>
+    </div>
+
+    <h2>Example 1: Class Binding</h2>
+    <div class="demo" x-data="{ isActive: false, theme: 'light' }">
+        <button @click="isActive = !isActive">Toggle Active</button>
+        <button @click="theme = theme === 'light' ? 'dark' : 'light'">Toggle Theme</button>
+        <div
+            class="box"
+            :class="{
+                'active': isActive,
+                'bg-light': theme === 'light',
+                'bg-dark': theme === 'dark'
+            }"
+            :style="theme === 'dark' ? 'background: #333; color: white;' : 'background: white; color: black;'"
+        >
+            <p>Status: <span x-text="isActive ? 'Active' : 'Inactive'"></span></p>
+            <p>Theme: <span x-text="theme"></span></p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> :class binds classes dynamically. Object syntax adds classes when values are true. :style binds inline styles.
+    </div>
+
+    <h2>Example 2: Attribute Binding</h2>
+    <div class="demo" x-data="{
+        imageUrl: 'https://via.placeholder.com/150/0000FF/FFFFFF?text=Blue',
+        altText: 'Blue placeholder image',
+        linkUrl: 'https://placeholder.com',
+        isDisabled: false
+    }">
+        <button @click="imageUrl = 'https://via.placeholder.com/150/FF0000/FFFFFF?text=Red'; altText = 'Red placeholder'">
+            Red Image
+        </button>
+        <button @click="imageUrl = 'https://via.placeholder.com/150/00FF00/FFFFFF?text=Green'; altText = 'Green placeholder'">
+            Green Image
+        </button>
+        <button @click="isDisabled = !isDisabled">
+            Toggle Button State
+        </button>
+
+        <div style="margin: 20px 0;">
+            <img :src="imageUrl" :alt="altText" style="display: block; margin: 10px 0;">
+            <a :href="linkUrl" target="_blank">Visit Placeholder.com</a>
+        </div>
+
+        <button :disabled="isDisabled">
+            <span x-text="isDisabled ? 'Disabled Button' : 'Enabled Button'"></span>
+        </button>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> :src, :alt, :href, :disabled bind attributes dynamically. Values update when data changes.
+    </div>
+
+    <h2>Example 3: Multiple Attributes with Spread</h2>
+    <div class="demo" x-data="{
+        buttonProps: {
+            type: 'button',
+            class: 'btn btn-primary',
+            style: 'background: blue; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;',
+            title: 'Click me!'
+        }
+    }">
+        <button v-bind="buttonProps" x-bind="buttonProps">
+            Styled Button
+        </button>
+        <p style="margin-top: 10px;">Hover over the button to see the title attribute!</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-bind without an argument spreads all properties from an object as attributes.
+    </div>
+
+    <h2>Example 4: Dynamic Form Elements</h2>
+    <div class="demo" x-data="{
+        inputType: 'text',
+        placeholder: 'Enter text',
+        value: '',
+        maxLength: 50,
+        isRequired: false
+    }">
+        <div>
+            <button @click="inputType = 'text'; placeholder = 'Enter text'">Text Input</button>
+            <button @click="inputType = 'email'; placeholder = 'Enter email'">Email Input</button>
+            <button @click="inputType = 'password'; placeholder = 'Enter password'">Password Input</button>
+            <button @click="isRequired = !isRequired">Toggle Required</button>
+        </div>
+
+        <input
+            :type="inputType"
+            :placeholder="placeholder"
+            :maxlength="maxLength"
+            :required="isRequired"
+            x-model="value"
+            style="display: block; margin: 20px 0; padding: 10px; width: 100%;"
+        >
+
+        <p>Type: <span x-text="inputType"></span></p>
+        <p>Required: <span x-text="isRequired ? 'Yes' : 'No'"></span></p>
+        <p>Value: <span x-text="value || '(empty)'"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Multiple attributes can be bound dynamically. The input element changes behavior based on bound attributes.
+    </div>
+
+    <h2>Example 5: Data Attributes</h2>
+    <div class="demo" x-data="{
+        userId: 123,
+        userName: 'John Doe',
+        userRole: 'admin'
+    }">
+        <div
+            class="box"
+            :data-user-id="userId"
+            :data-user-name="userName"
+            :data-role="userRole"
+            style="background: #e8f5e9; color: #2e7d32;"
+        >
+            <p>User Profile Box</p>
+            <p>Open DevTools and inspect this box to see data attributes!</p>
+        </div>
+        <p>User ID: <span x-text="userId"></span></p>
+        <p>User Name: <span x-text="userName"></span></p>
+        <p>Role: <span x-text="userRole"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-bind works with data attributes. Useful for storing metadata or interfacing with JavaScript libraries.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>

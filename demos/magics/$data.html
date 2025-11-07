@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$data Magic Demo</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .box { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        a { display: inline-block; margin-top: 20px; color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>$data Magic Property</h1>
+
+    <div class="explanation">
+        <strong>What is $data?</strong>
+        <p>$data is an object containing all reactive data properties of the current component. It provides access to the entire data scope defined in x-data.</p>
+    </div>
+
+    <h2>Example 1: Inspecting Component Data</h2>
+    <div class="demo" x-data="{
+        name: 'John Doe',
+        age: 30,
+        email: 'john@example.com'
+    }">
+        <div class="box">
+            <button @click="console.log($data)">Log $data to Console</button>
+            <button @click="alert(JSON.stringify($data, null, 2))">Show $data as Alert</button>
+            <p>Open console (F12) and click "Log $data" to see all component data</p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $data contains all reactive properties. Useful for debugging or introspection.
+    </div>
+
+    <h2>Example 2: Serialize Component State</h2>
+    <div class="demo" x-data="{
+        form: {
+            firstName: 'Jane',
+            lastName: 'Smith',
+            email: 'jane@example.com'
+        },
+        serialized: ''
+    }">
+        <input type="text" x-model="form.firstName" placeholder="First Name" style="display: block; margin: 5px 0; padding: 8px;">
+        <input type="text" x-model="form.lastName" placeholder="Last Name" style="display: block; margin: 5px 0; padding: 8px;">
+        <input type="email" x-model="form.email" placeholder="Email" style="display: block; margin: 5px 0; padding: 8px;">
+
+        <button @click="serialized = JSON.stringify($data, null, 2)">Serialize State</button>
+        <button @click="localStorage.setItem('formData', JSON.stringify($data.form))">Save to LocalStorage</button>
+
+        <pre x-show="serialized" x-text="serialized"></pre>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $data enables serialization of entire component state. Perfect for persistence or debugging.
+    </div>
+
+    <h2>Example 3: Reset Component State</h2>
+    <div class="demo" x-data="{
+        initialState: { count: 0, name: '', enabled: true },
+        count: 0,
+        name: '',
+        enabled: true,
+        reset() {
+            Object.assign(this.$data, this.initialState);
+        }
+    }">
+        <div class="box">
+            <input type="number" x-model.number="count">
+            <input type="text" x-model="name" placeholder="Name">
+            <label><input type="checkbox" x-model="enabled"> Enabled</label>
+
+            <div style="margin: 15px 0;">
+                <button @click="reset()">Reset All</button>
+            </div>
+
+            <p>Count: <span x-text="count"></span></p>
+            <p>Name: <span x-text="name || '(empty)'"></span></p>
+            <p>Enabled: <span x-text="enabled ? 'Yes' : 'No'"></span></p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Object.assign($data, initial) resets all properties at once. Useful for form reset.
+    </div>
+
+    <h2>Example 4: Clone Component Data</h2>
+    <div class="demo" x-data="{
+        original: {
+            title: 'Original Document',
+            content: 'This is the original content.'
+        },
+        cloned: null,
+        clone() {
+            this.cloned = JSON.parse(JSON.stringify(this.$data.original));
+        }
+    }">
+        <div class="box">
+            <h4>Original</h4>
+            <input type="text" x-model="original.title" style="display: block; width: 100%; margin: 5px 0; padding: 8px;">
+            <textarea x-model="original.content" rows="3" style="display: block; width: 100%; margin: 5px 0; padding: 8px;"></textarea>
+        </div>
+
+        <button @click="clone()">Clone Data</button>
+
+        <div x-show="cloned" class="box">
+            <h4>Cloned (Independent Copy)</h4>
+            <p>Title: <span x-text="cloned?.title"></span></p>
+            <p>Content: <span x-text="cloned?.content"></span></p>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Use $data to create deep clones of component data. Changes to original don't affect clone.
+    </div>
+
+    <h2>Example 5: Iterate Over Data Properties</h2>
+    <div class="demo" x-data="{
+        username: 'johndoe',
+        email: 'john@example.com',
+        age: 30,
+        active: true,
+        properties: []
+    }" x-init="properties = Object.keys($data).filter(k => k !== 'properties')">
+        <div class="box">
+            <h4>Component Properties</h4>
+            <ul>
+                <template x-for="prop in properties" :key="prop">
+                    <li>
+                        <strong x-text="prop"></strong>:
+                        <span x-text="JSON.stringify($data[prop])"></span>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> Object.keys($data) lists all properties. Can dynamically iterate and display component data.
+    </div>
+
+    <h2>Example 6: Conditional Data Export</h2>
+    <div class="demo" x-data="{
+        publicData: { name: 'John', city: 'NYC' },
+        privateData: { password: 'secret123', ssn: '123-45-6789' },
+        exportData() {
+            const { privateData, ...exportable } = this.$data;
+            return JSON.stringify(exportable, null, 2);
+        },
+        exported: ''
+    }">
+        <button @click="exported = exportData()">Export Public Data Only</button>
+
+        <pre x-show="exported" x-text="exported"></pre>
+
+        <p style="font-size: 12px; color: #666;">Notice: privateData is excluded from export</p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $data allows selective export. Destructure to exclude sensitive properties.
+    </div>
+
+    <h2>Example 7: Watching All Data Changes</h2>
+    <div class="demo" x-data="{
+        field1: '',
+        field2: '',
+        field3: '',
+        changeLog: []
+    }" x-effect="changeLog.push(`Data changed: ${JSON.stringify($data).slice(0, 50)}...`); if (changeLog.length > 5) changeLog.shift();">
+        <input type="text" x-model="field1" placeholder="Field 1" style="display: block; margin: 5px 0; padding: 8px;">
+        <input type="text" x-model="field2" placeholder="Field 2" style="display: block; margin: 5px 0; padding: 8px;">
+        <input type="text" x-model="field3" placeholder="Field 3" style="display: block; margin: 5px 0; padding: 8px;">
+
+        <div class="box">
+            <h4>Change Log</h4>
+            <ul style="font-family: monospace; font-size: 12px;">
+                <template x-for="(log, index) in changeLog" :key="index">
+                    <li x-text="log"></li>
+                </template>
+            </ul>
+        </div>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> x-effect with $data tracks any data change. Useful for audit logging.
+    </div>
+
+    <h2>Example 8: Dynamic Property Access</h2>
+    <div class="demo" x-data="{
+        user: {
+            name: 'John',
+            email: 'john@example.com',
+            age: 30
+        },
+        selectedProp: 'name',
+        value: ''
+    }">
+        <select x-model="selectedProp">
+            <option value="name">Name</option>
+            <option value="email">Email</option>
+            <option value="age">Age</option>
+        </select>
+
+        <button @click="value = $data.user[selectedProp]">Get Value</button>
+
+        <p>Selected property: <span x-text="selectedProp"></span></p>
+        <p>Value: <span x-text="value"></span></p>
+    </div>
+    <div class="explanation">
+        <strong>Explanation:</strong> $data enables dynamic property access using bracket notation. Useful for generic operations.
+    </div>
+
+    <a href="../../index.html">← Back to All Demos</a>
+</body>
+</html>
