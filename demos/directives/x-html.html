@@ -6,7 +6,7 @@
     <title>x-html Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -14,6 +14,15 @@
         .warning { background: #fff3cd; padding: 15px; margin: 10px 0; border-left: 4px solid #ffc107; }
         button { padding: 10px 20px; margin: 5px; cursor: pointer; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { background: white; padding: 15px; border: 1px solid #ddd; }
+        .s2 { margin-top: 10px; }
+        .s3 { background: white; padding: 15px; margin: 15px 0; border: 1px solid #ddd; }
+        .s4 { background: white; padding: 20px; margin: 15px 0; border: 1px solid #ddd; min-height: 150px; }
+        .s5 { background: white; padding: 20px; margin: 15px 0; border: 1px solid #ddd; text-align: center; }
+        .s6 { background: #ffebee; padding: 15px; border: 1px solid #ef5350; }
+        .s7 { margin-top: 20px; }
+        .s8 { background: #e8f5e9; padding: 15px; border: 1px solid #66bb6a; }
+        .s9 { margin: 15px 0; min-height: 100px; }
     </style>
 </head>
 <body>
@@ -33,8 +42,8 @@
     <div class="demo" x-data="{
         htmlContent: '<strong>Bold text</strong>, <em>italic text</em>, and <u>underlined text</u>'
     }">
-        <div style="background: white; padding: 15px; border: 1px solid #ddd;" x-html="htmlContent"></div>
-        <p style="margin-top: 10px;">The HTML tags are rendered, not shown as text.</p>
+        <div class="s1" x-html="htmlContent"></div>
+        <p class="s2">The HTML tags are rendered, not shown as text.</p>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-html renders HTML tags. The strong, em, and u tags are displayed as formatted text.
@@ -63,7 +72,7 @@
         <button @click="contentType = 'paragraph'">Show Paragraph</button>
         <button @click="contentType = 'table'">Show Table</button>
 
-        <div style="background: white; padding: 15px; margin: 15px 0; border: 1px solid #ddd;" x-html="getContent()"></div>
+        <div class="s3" x-html="getContent()"></div>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-html can render different HTML structures dynamically. Click buttons to switch between different content types.
@@ -96,7 +105,7 @@
             ></button>
         </div>
 
-        <div style="background: white; padding: 20px; margin: 15px 0; border: 1px solid #ddd; min-height: 150px;" x-html="articles[selectedArticle].content"></div>
+        <div class="s4" x-html="articles[selectedArticle].content"></div>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-html is useful for displaying rich text content from CMSs or databases that store formatted HTML.
@@ -115,7 +124,7 @@
         <button @click="currentIcon = 'star'">Star</button>
         <button @click="currentIcon = 'check'">Check</button>
 
-        <div style="background: white; padding: 20px; margin: 15px 0; border: 1px solid #ddd; text-align: center;" x-html="icons[currentIcon]"></div>
+        <div class="s5" x-html="icons[currentIcon]"></div>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-html can render SVG markup, useful for displaying icons or graphics dynamically.
@@ -126,10 +135,10 @@
         content: '<h3>Heading</h3><p>Paragraph with <strong>bold</strong> text.</p>'
     }">
         <h4>With x-text (escapes HTML):</h4>
-        <div style="background: #ffebee; padding: 15px; border: 1px solid #ef5350;" x-text="content"></div>
+        <div class="s6" x-text="content"></div>
 
-        <h4 style="margin-top: 20px;">With x-html (renders HTML):</h4>
-        <div style="background: #e8f5e9; padding: 15px; border: 1px solid #66bb6a;" x-html="content"></div>
+        <h4 class="s7">With x-html (renders HTML):</h4>
+        <div class="s8" x-html="content"></div>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-text shows HTML as plain text (safe), while x-html renders it (powerful but risky with untrusted content).
@@ -162,7 +171,7 @@
             <span x-text="loading ? 'Loading...' : 'Load Content'"></span>
         </button>
 
-        <div style="margin: 15px 0; min-height: 100px;" x-html="htmlContent"></div>
+        <div class="s9" x-html="htmlContent"></div>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-html can display dynamically loaded HTML content, such as from API responses (ensure content is sanitized!).

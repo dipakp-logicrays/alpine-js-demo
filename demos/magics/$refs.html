@@ -6,7 +6,7 @@
     <title>$refs Magic Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -14,6 +14,15 @@
         button { padding: 10px 20px; margin: 5px; cursor: pointer; }
         input, textarea { padding: 8px; margin: 5px; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { display: block; width: 100%; margin: 10px 0; }
+        .s2 { color: red; }
+        .s3 { width: 80px; }
+        .s4 { width: 100%; padding: 10px; }
+        .s5 { margin: 10px 0; }
+        .s6 { background: white; padding: 15px; border: 1px solid #ddd; white-space: pre-wrap; }
+        .s7 { border: 1px solid #ddd; display: block; margin: 10px 0; }
+        .s8 { height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; }
+        .s9 { height: 100px; }
     </style>
 </head>
 <body>
@@ -51,10 +60,10 @@
             if (this.errors.length === 0) alert('Form valid!');
         }
     }">
-        <input type="email" x-ref="email" placeholder="Email" style="display: block; width: 100%; margin: 10px 0;">
-        <input type="password" x-ref="password" placeholder="Password (8+ chars)" style="display: block; width: 100%; margin: 10px 0;">
+        <input type="email" x-ref="email" placeholder="Email" class="s1">
+        <input type="password" x-ref="password" placeholder="Password (8+ chars)" class="s1">
         <button @click="validate()">Validate</button>
-        <ul style="color: red;">
+        <ul class="s2">
             <template x-for="error in errors" :key="error">
                 <li x-text="error"></li>
             </template>
@@ -66,14 +75,14 @@
 
     <h2>Example 3: Multiple Refs</h2>
     <div class="demo" x-data="{ result: '' }">
-        <input type="number" x-ref="num1" value="5" style="width: 80px;">
+        <input type="number" x-ref="num1" value="5" class="s3">
         <select x-ref="operator">
             <option>+</option>
             <option>-</option>
             <option>*</option>
             <option>/</option>
         </select>
-        <input type="number" x-ref="num2" value="3" style="width: 80px;">
+        <input type="number" x-ref="num2" value="3" class="s3">
         <button @click="result = eval($refs.num1.value + $refs.operator.value + $refs.num2.value)">Calculate</button>
         <p>Result: <span x-text="result || '?'"></span></p>
     </div>
@@ -83,13 +92,13 @@
 
     <h2>Example 4: Dynamic Content</h2>
     <div class="demo" x-data="{}">
-        <textarea x-ref="editor" rows="5" style="width: 100%; padding: 10px;">Edit this text...</textarea>
-        <div style="margin: 10px 0;">
+        <textarea x-ref="editor" rows="5" class="s4">Edit this text...</textarea>
+        <div class="s5">
             <button @click="$refs.preview.textContent = $refs.editor.value">Preview</button>
             <button @click="$refs.editor.select()">Select All</button>
             <button @click="navigator.clipboard.writeText($refs.editor.value)">Copy</button>
         </div>
-        <div x-ref="preview" style="background: white; padding: 15px; border: 1px solid #ddd; white-space: pre-wrap;"></div>
+        <div x-ref="preview" class="s6"></div>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> $refs connects editor and preview areas for real-time content manipulation.
@@ -121,7 +130,7 @@
             }
         }
     }">
-        <canvas x-ref="canvas" width="300" height="150" style="border: 1px solid #ddd; display: block; margin: 10px 0;"></canvas>
+        <canvas x-ref="canvas" width="300" height="150" class="s7"></canvas>
         <button @click="draw('circle')">Circle</button>
         <button @click="draw('square')">Square</button>
         <button @click="draw('triangle')">Triangle</button>
@@ -153,13 +162,13 @@
 
     <h2>Example 7: Scroll Control</h2>
     <div class="demo" x-data="{}">
-        <div x-ref="scrollBox" style="height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
-            <p style="height: 100px;">Content 1</p>
-            <p style="height: 100px;">Content 2</p>
-            <p style="height: 100px;">Content 3</p>
-            <p style="height: 100px;">Content 4</p>
+        <div x-ref="scrollBox" class="s8">
+            <p class="s9">Content 1</p>
+            <p class="s9">Content 2</p>
+            <p class="s9">Content 3</p>
+            <p class="s9">Content 4</p>
         </div>
-        <div style="margin: 10px 0;">
+        <div class="s5">
             <button @click="$refs.scrollBox.scrollTop = 0">Scroll to Top</button>
             <button @click="$refs.scrollBox.scrollTop = $refs.scrollBox.scrollHeight">Scroll to Bottom</button>
             <button @click="$refs.scrollBox.scrollTop = $refs.scrollBox.scrollHeight / 2">Scroll to Middle</button>

@@ -6,13 +6,15 @@
     <title>x-model Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
         .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
         input, textarea, select { padding: 8px; margin: 5px; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { height: 100px; display: block; width: 200px; }
+        .s2 { width: 100%; }
     </style>
 </head>
 <body>
@@ -101,7 +103,7 @@
     <div class="demo" x-data="{ interests: ['sports', 'music'] }">
         <label>
             Select your interests (hold Ctrl/Cmd to select multiple):
-            <select x-model="interests" multiple style="height: 100px; display: block; width: 200px;">
+            <select x-model="interests" multiple class="s1">
                 <option value="sports">Sports</option>
                 <option value="music">Music</option>
                 <option value="movies">Movies</option>
@@ -123,7 +125,7 @@
 
     <h2>Example 6: Textarea Binding</h2>
     <div class="demo" x-data="{ comment: 'Write something...' }">
-        <textarea x-model="comment" rows="5" style="width: 100%;"></textarea>
+        <textarea x-model="comment" rows="5" class="s2"></textarea>
         <p>Character count: <span x-text="comment.length"></span></p>
         <p>Word count: <span x-text="comment.trim().split(/\s+/).filter(w => w.length > 0).length"></span></p>
     </div>

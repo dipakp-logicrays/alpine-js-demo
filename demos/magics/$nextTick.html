@@ -6,7 +6,7 @@
     <title>$nextTick Magic Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -14,6 +14,15 @@
         button { padding: 10px 20px; margin: 5px; cursor: pointer; }
         .box { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { padding: 10px; }
+        .s2 { height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: white; }
+        .s3 { padding: 10px; margin: 5px 0; background: #f0f0f0; border-radius: 4px; }
+        .s4 { width: 100%; padding: 10px; }
+        .s5 { width: 300px; height: 100px; }
+        .s6 { flex: 1; background: #2196f3; transition: height 0.3s; }
+        .s7 { margin: 0; }
+        .s8 { display: block; width: 100%; padding: 10px; margin: 10px 0; }
+        .s9 { background: #e8f5e9; }
     </style>
 </head>
 <body>
@@ -49,7 +58,7 @@
         <button @click="addItem()">Add Item</button>
         <ul x-ref="list" class="box">
             <template x-for="item in items" :key="item">
-                <li x-text="item" style="padding: 10px;"></li>
+                <li x-text="item" class="s1"></li>
             </template>
         </ul>
         <p>List height: <span x-text="height"></span>px</p>
@@ -68,9 +77,9 @@
             });
         }
     }">
-        <div x-ref="chat" style="height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: white;">
+        <div x-ref="chat" class="s2">
             <template x-for="msg in messages" :key="msg">
-                <div style="padding: 10px; margin: 5px 0; background: #f0f0f0; border-radius: 4px;" x-text="msg"></div>
+                <div class="s3" x-text="msg"></div>
             </template>
         </div>
         <button @click="addMessage()">Add Message</button>
@@ -89,7 +98,7 @@
             });
         }
     }">
-        <input type="text" x-ref="input" x-model="value" style="width: 100%; padding: 10px;">
+        <input type="text" x-ref="input" x-model="value" class="s4">
         <button @click="setValue('Hello World!')">Set and Select Text</button>
         <button @click="setValue('Alpine.js is awesome!')">Set Different Text</button>
     </div>
@@ -109,7 +118,7 @@
             });
         ">Show Box and Get Info</button>
 
-        <div x-show="showBox" x-ref="box" class="box" style="width: 300px; height: 100px;">
+        <div x-show="showBox" x-ref="box" class="box s5" >
             This is a box!
         </div>
 
@@ -134,7 +143,7 @@
     }" x-init="updateChart()">
         <div x-ref="chart" style="display: flex; align-items: flex-end; height: 200px; gap: 10px; padding: 10px; background: white; border: 1px solid #ddd;">
             <template x-for="(value, index) in data" :key="index">
-                <div class="bar" style="flex: 1; background: #2196f3; transition: height 0.3s;"></div>
+                <div class="bar s6" ></div>
             </template>
         </div>
         <button @click="updateChart()">Update Chart</button>
@@ -165,7 +174,7 @@
 
         <div class="box">
             <h4>Execution Order:</h4>
-            <ol style="margin: 0;">
+            <ol class="s7">
                 <template x-for="(log, index) in logs" :key="index">
                     <li x-text="log"></li>
                 </template>
@@ -190,14 +199,14 @@
             }
         }
     }">
-        <input type="email" x-model="email" placeholder="Enter email" style="display: block; width: 100%; padding: 10px; margin: 10px 0;">
+        <input type="email" x-model="email" placeholder="Enter email" class="s8">
         <button @click="validate()">Validate and Submit</button>
 
         <div x-show="!isValid && email.length > 0" class="box" style="background: #ffebee;">
             Invalid email format
         </div>
 
-        <div x-show="submitted" x-transition class="box" style="background: #e8f5e9;">
+        <div x-show="submitted" x-transition class="box s9" >
             Form submitted successfully!
         </div>
     </div>

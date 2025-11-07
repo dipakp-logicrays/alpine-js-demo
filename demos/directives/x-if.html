@@ -6,7 +6,7 @@
     <title>x-if Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -15,6 +15,19 @@
         button { padding: 10px 20px; margin: 5px; cursor: pointer; }
         .box { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { display: flex; gap: 20px; }
+        .s2 { flex: 1; }
+        .s3 { background: #f5f5f5; }
+        .s4 { background: #e3f2fd; }
+        .s5 { background: #ffebee; }
+        .s6 { background: #fff3e0; }
+        .s7 { margin-bottom: 15px; }
+        .s8 { display: block; width: 100%; margin: 10px 0; padding: 8px; }
+        .s9 { background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 4px; }
+        .s10 { background: #e8f5e9; }
+        .s11 { background: #e3f2fd; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .s12 { background: #fff3e0; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .s13 { width: 80px; }
     </style>
 </head>
 <body>
@@ -48,8 +61,8 @@
 
     <h2>Example 2: x-if vs x-show Performance</h2>
     <div class="demo" x-data="{ showIf: true, showShow: true }">
-        <div style="display: flex; gap: 20px;">
-            <div style="flex: 1;">
+        <div class="s1">
+            <div class="s2">
                 <h4>Using x-if</h4>
                 <button @click="showIf = !showIf">Toggle x-if</button>
                 <template x-if="showIf">
@@ -61,7 +74,7 @@
                 </template>
             </div>
 
-            <div style="flex: 1;">
+            <div class="s2">
                 <h4>Using x-show</h4>
                 <button @click="showShow = !showShow">Toggle x-show</button>
                 <div x-show="showShow" class="box">
@@ -86,7 +99,7 @@
         </select>
 
         <template x-if="userType === 'guest'">
-            <div class="box" style="background: #f5f5f5;">
+            <div class="box s3" >
                 <h4>👋 Welcome, Guest!</h4>
                 <p>Please log in to access more features.</p>
                 <button>Sign In</button>
@@ -94,7 +107,7 @@
         </template>
 
         <template x-if="userType === 'user'">
-            <div class="box" style="background: #e3f2fd;">
+            <div class="box s4" >
                 <h4>✓ Welcome, User!</h4>
                 <p>You have access to basic features.</p>
                 <button>View Profile</button>
@@ -102,7 +115,7 @@
         </template>
 
         <template x-if="userType === 'admin'">
-            <div class="box" style="background: #ffebee;">
+            <div class="box s5" >
                 <h4>⚙️ Admin Panel</h4>
                 <p>You have full administrative access.</p>
                 <button>Manage Users</button>
@@ -111,7 +124,7 @@
         </template>
 
         <template x-if="userType === 'moderator'">
-            <div class="box" style="background: #fff3e0;">
+            <div class="box s6" >
                 <h4>🛡️ Moderator Panel</h4>
                 <p>You can moderate content and users.</p>
                 <button>Review Reports</button>
@@ -129,7 +142,7 @@
         loginData: { email: '', password: '' },
         signupData: { name: '', email: '', password: '', confirmPassword: '' }
     }">
-        <div style="margin-bottom: 15px;">
+        <div class="s7">
             <button @click="formType = 'login'" :style="formType === 'login' ? 'background: #2196f3; color: white;' : ''">Login</button>
             <button @click="formType = 'signup'" :style="formType === 'signup' ? 'background: #2196f3; color: white;' : ''">Sign Up</button>
         </div>
@@ -137,20 +150,20 @@
         <template x-if="formType === 'login'">
             <div class="box">
                 <h4>Login Form</h4>
-                <input type="email" x-model="loginData.email" placeholder="Email" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
-                <input type="password" x-model="loginData.password" placeholder="Password" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
-                <button style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 4px;">Login</button>
+                <input type="email" x-model="loginData.email" placeholder="Email" class="s8">
+                <input type="password" x-model="loginData.password" placeholder="Password" class="s8">
+                <button class="s9">Login</button>
             </div>
         </template>
 
         <template x-if="formType === 'signup'">
             <div class="box">
                 <h4>Sign Up Form</h4>
-                <input type="text" x-model="signupData.name" placeholder="Full Name" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
-                <input type="email" x-model="signupData.email" placeholder="Email" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
-                <input type="password" x-model="signupData.password" placeholder="Password" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
-                <input type="password" x-model="signupData.confirmPassword" placeholder="Confirm Password" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
-                <button style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 4px;">Sign Up</button>
+                <input type="text" x-model="signupData.name" placeholder="Full Name" class="s8">
+                <input type="email" x-model="signupData.email" placeholder="Email" class="s8">
+                <input type="password" x-model="signupData.password" placeholder="Password" class="s8">
+                <input type="password" x-model="signupData.confirmPassword" placeholder="Confirm Password" class="s8">
+                <button class="s9">Sign Up</button>
             </div>
         </template>
     </div>
@@ -194,7 +207,7 @@
         </template>
 
         <template x-if="state === 'success'">
-            <div class="box" style="background: #e8f5e9;">
+            <div class="box s10" >
                 <h4>✓ Success!</h4>
                 <p x-text="data?.message"></p>
                 <ul>
@@ -206,7 +219,7 @@
         </template>
 
         <template x-if="state === 'error'">
-            <div class="box" style="background: #ffebee;">
+            <div class="box s5" >
                 <h4>✗ Error</h4>
                 <p x-text="error"></p>
                 <button @click="loadData()">Retry</button>
@@ -238,14 +251,14 @@
                 <p>Welcome back!</p>
 
                 <template x-if="!isPremium">
-                    <div style="background: #e3f2fd; padding: 10px; margin: 10px 0; border-radius: 4px;">
+                    <div class="s11">
                         <p>Free Account - Upgrade to Premium for more features!</p>
                         <button>Upgrade Now</button>
                     </div>
                 </template>
 
                 <template x-if="isPremium">
-                    <div style="background: #fff3e0; padding: 10px; margin: 10px 0; border-radius: 4px;">
+                    <div class="s12">
                         <p>⭐ Premium Member - Thank you for your support!</p>
                         <button>Manage Subscription</button>
                     </div>
@@ -266,7 +279,7 @@
         }
     }">
         <div>
-            <label>Age: <input type="number" x-model.number="user.age" style="width: 80px;"></label>
+            <label>Age: <input type="number" x-model.number="user.age" class="s13"></label>
             <label><input type="checkbox" x-model="user.verified"> Verified</label>
             <select x-model="user.subscription">
                 <option value="free">Free</option>
@@ -276,14 +289,14 @@
         </div>
 
         <template x-if="user.age >= 18 && user.verified && user.subscription === 'premium'">
-            <div class="box" style="background: #e8f5e9;">
+            <div class="box s10" >
                 <h4>✓ Full Access Granted</h4>
                 <p>You meet all requirements for premium content!</p>
             </div>
         </template>
 
         <template x-if="!(user.age >= 18 && user.verified && user.subscription === 'premium')">
-            <div class="box" style="background: #ffebee;">
+            <div class="box s5" >
                 <h4>⚠️ Access Restricted</h4>
                 <p>Requirements:</p>
                 <ul>

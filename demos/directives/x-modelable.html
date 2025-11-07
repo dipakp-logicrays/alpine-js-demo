@@ -6,7 +6,7 @@
     <title>x-modelable Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -14,6 +14,18 @@
         button { padding: 10px 20px; margin: 5px; cursor: pointer; }
         .custom-component { background: white; border: 2px solid #2196f3; border-radius: 8px; padding: 15px; margin: 10px 0; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { margin: 0 15px; font-size: 20px; font-weight: bold; }
+        .s2 { margin-top: 10px; font-size: 14px; }
+        .s3 { display: flex; gap: 10px; }
+        .s4 { margin-top: 10px; }
+        .s5 { cursor: pointer; display: inline-flex; align-items: center; }
+        .s6 { margin-left: 10px; font-weight: bold; }
+        .s7 { margin-left: 10px; font-size: 20px; }
+        .s8 { width: 100%; }
+        .s9 { display: flex; justify-content: space-between; margin-top: 5px; }
+        .s10 { background: #2196f3; color: white; padding: 5px 10px; border-radius: 15px; display: inline-flex; align-items: center; }
+        .s11 { background: none; border: none; color: white; margin-left: 5px; cursor: pointer; }
+        .s12 { padding: 8px; width: 100%; }
     </style>
 </head>
 <body>
@@ -32,9 +44,9 @@
         <div x-data="{ internal: 0 }" x-modelable="internal" x-model="count" class="custom-component">
             <h4>Custom Counter Component</h4>
             <button @click="internal++">+</button>
-            <span x-text="internal" style="margin: 0 15px; font-size: 20px; font-weight: bold;"></span>
+            <span x-text="internal" class="s1"></span>
             <button @click="internal--">-</button>
-            <p style="margin-top: 10px; font-size: 14px;">Internal value: <span x-text="internal"></span></p>
+            <p class="s2">Internal value: <span x-text="internal"></span></p>
         </div>
 
         <button @click="count = 10">Set parent to 10</button>
@@ -55,7 +67,7 @@
             colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#34495e']
         }" x-modelable="color" x-model="selectedColor" class="custom-component">
             <h4>Color Picker Component</h4>
-            <div style="display: flex; gap: 10px;">
+            <div class="s3">
                 <template x-for="c in colors" :key="c">
                     <div
                         @click="color = c"
@@ -63,7 +75,7 @@
                     ></div>
                 </template>
             </div>
-            <input type="color" x-model="color" style="margin-top: 10px;">
+            <input type="color" x-model="color" class="s4">
         </div>
     </div>
     <div class="explanation">
@@ -80,31 +92,31 @@
         <!-- Custom toggle component -->
         <div x-data="{ checked: false }" x-modelable="checked" x-model="isEnabled" class="custom-component">
             <h4>Feature Toggle</h4>
-            <div @click="checked = !checked" style="cursor: pointer; display: inline-flex; align-items: center;">
+            <div @click="checked = !checked" class="s5">
                 <div :style="`width: 50px; height: 24px; background: ${checked ? '#2196f3' : '#ccc'}; border-radius: 12px; position: relative; transition: all 0.3s;`">
                     <div :style="`width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: ${checked ? '28px' : '2px'}; transition: all 0.3s;`"></div>
                 </div>
-                <span x-text="checked ? 'ON' : 'OFF'" style="margin-left: 10px; font-weight: bold;"></span>
+                <span x-text="checked ? 'ON' : 'OFF'" class="s6"></span>
             </div>
         </div>
 
         <div x-data="{ checked: false }" x-modelable="checked" x-model="isActive" class="custom-component">
             <h4>Active Mode Toggle</h4>
-            <div @click="checked = !checked" style="cursor: pointer; display: inline-flex; align-items: center;">
+            <div @click="checked = !checked" class="s5">
                 <div :style="`width: 50px; height: 24px; background: ${checked ? '#4caf50' : '#ccc'}; border-radius: 12px; position: relative; transition: all 0.3s;`">
                     <div :style="`width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: ${checked ? '28px' : '2px'}; transition: all 0.3s;`"></div>
                 </div>
-                <span x-text="checked ? 'ACTIVE' : 'INACTIVE'" style="margin-left: 10px; font-weight: bold;"></span>
+                <span x-text="checked ? 'ACTIVE' : 'INACTIVE'" class="s6"></span>
             </div>
         </div>
 
         <div x-data="{ checked: false }" x-modelable="checked" x-model="isDarkMode" class="custom-component">
             <h4>Dark Mode Toggle</h4>
-            <div @click="checked = !checked" style="cursor: pointer; display: inline-flex; align-items: center;">
+            <div @click="checked = !checked" class="s5">
                 <div :style="`width: 50px; height: 24px; background: ${checked ? '#673ab7' : '#ccc'}; border-radius: 12px; position: relative; transition: all 0.3s;`">
                     <div :style="`width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: ${checked ? '28px' : '2px'}; transition: all 0.3s;`"></div>
                 </div>
-                <span x-text="checked ? '🌙' : '☀️'" style="margin-left: 10px; font-size: 20px;"></span>
+                <span x-text="checked ? '🌙' : '☀️'" class="s7"></span>
             </div>
         </div>
     </div>
@@ -121,8 +133,8 @@
         <!-- Custom slider component -->
         <div x-data="{ value: 50 }" x-modelable="value" x-model="volume" class="custom-component">
             <h4>Volume Control</h4>
-            <input type="range" x-model.number="value" min="0" max="100" style="width: 100%;">
-            <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+            <input type="range" x-model.number="value" min="0" max="100" class="s8">
+            <div class="s9">
                 <button @click="value = 0">Mute</button>
                 <button @click="value = 50">50%</button>
                 <button @click="value = 100">Max</button>
@@ -131,7 +143,7 @@
 
         <div x-data="{ value: 50 }" x-modelable="value" x-model="brightness" class="custom-component">
             <h4>Brightness Control</h4>
-            <input type="range" x-model.number="value" min="0" max="100" style="width: 100%;">
+            <input type="range" x-model.number="value" min="0" max="100" class="s8">
             <div :style="`width: ${value}%; height: 20px; background: linear-gradient(to right, #000, #fff); border-radius: 4px; margin-top: 10px;`"></div>
         </div>
     </div>
@@ -165,9 +177,9 @@
             <h4>Tag Input Component</h4>
             <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px;">
                 <template x-for="(tag, index) in items" :key="tag">
-                    <span style="background: #2196f3; color: white; padding: 5px 10px; border-radius: 15px; display: inline-flex; align-items: center;">
+                    <span class="s10">
                         <span x-text="tag"></span>
-                        <button @click="removeTag(index)" style="background: none; border: none; color: white; margin-left: 5px; cursor: pointer;">×</button>
+                        <button @click="removeTag(index)" class="s11">×</button>
                     </span>
                 </template>
             </div>
@@ -176,7 +188,7 @@
                 x-model="newTag"
                 @keyup.enter="addTag()"
                 placeholder="Type and press Enter"
-                style="padding: 8px; width: 100%;"
+                class="s12"
             >
         </div>
     </div>

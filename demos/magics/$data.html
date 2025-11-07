@@ -6,7 +6,7 @@
     <title>$data Magic Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -15,6 +15,11 @@
         .box { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
         pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { display: block; margin: 5px 0; padding: 8px; }
+        .s2 { margin: 15px 0; }
+        .s3 { display: block; width: 100%; margin: 5px 0; padding: 8px; }
+        .s4 { font-size: 12px; color: #666; }
+        .s5 { font-family: monospace; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -50,9 +55,9 @@
         },
         serialized: ''
     }">
-        <input type="text" x-model="form.firstName" placeholder="First Name" style="display: block; margin: 5px 0; padding: 8px;">
-        <input type="text" x-model="form.lastName" placeholder="Last Name" style="display: block; margin: 5px 0; padding: 8px;">
-        <input type="email" x-model="form.email" placeholder="Email" style="display: block; margin: 5px 0; padding: 8px;">
+        <input type="text" x-model="form.firstName" placeholder="First Name" class="s1">
+        <input type="text" x-model="form.lastName" placeholder="Last Name" class="s1">
+        <input type="email" x-model="form.email" placeholder="Email" class="s1">
 
         <button @click="serialized = JSON.stringify($data, null, 2)">Serialize State</button>
         <button @click="localStorage.setItem('formData', JSON.stringify($data.form))">Save to LocalStorage</button>
@@ -78,7 +83,7 @@
             <input type="text" x-model="name" placeholder="Name">
             <label><input type="checkbox" x-model="enabled"> Enabled</label>
 
-            <div style="margin: 15px 0;">
+            <div class="s2">
                 <button @click="reset()">Reset All</button>
             </div>
 
@@ -104,8 +109,8 @@
     }">
         <div class="box">
             <h4>Original</h4>
-            <input type="text" x-model="original.title" style="display: block; width: 100%; margin: 5px 0; padding: 8px;">
-            <textarea x-model="original.content" rows="3" style="display: block; width: 100%; margin: 5px 0; padding: 8px;"></textarea>
+            <input type="text" x-model="original.title" class="s3">
+            <textarea x-model="original.content" rows="3" class="s3"></textarea>
         </div>
 
         <button @click="clone()">Clone Data</button>
@@ -158,7 +163,7 @@
 
         <pre x-show="exported" x-text="exported"></pre>
 
-        <p style="font-size: 12px; color: #666;">Notice: privateData is excluded from export</p>
+        <p class="s4">Notice: privateData is excluded from export</p>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> $data allows selective export. Destructure to exclude sensitive properties.
@@ -171,13 +176,13 @@
         field3: '',
         changeLog: []
     }" x-effect="changeLog.push(`Data changed: ${JSON.stringify($data).slice(0, 50)}...`); if (changeLog.length > 5) changeLog.shift();">
-        <input type="text" x-model="field1" placeholder="Field 1" style="display: block; margin: 5px 0; padding: 8px;">
-        <input type="text" x-model="field2" placeholder="Field 2" style="display: block; margin: 5px 0; padding: 8px;">
-        <input type="text" x-model="field3" placeholder="Field 3" style="display: block; margin: 5px 0; padding: 8px;">
+        <input type="text" x-model="field1" placeholder="Field 1" class="s1">
+        <input type="text" x-model="field2" placeholder="Field 2" class="s1">
+        <input type="text" x-model="field3" placeholder="Field 3" class="s1">
 
         <div class="box">
             <h4>Change Log</h4>
-            <ul style="font-family: monospace; font-size: 12px;">
+            <ul class="s5">
                 <template x-for="(log, index) in changeLog" :key="index">
                     <li x-text="log"></li>
                 </template>

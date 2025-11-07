@@ -6,7 +6,7 @@
     <title>x-for Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -15,6 +15,16 @@
         input { padding: 8px; margin: 5px; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
         .card { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
+        .s1 { width: 70%; }
+        .s2 { display: flex; justify-content: space-between; align-items: center; margin: 5px 0; }
+        .s3 { background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; }
+        .s4 { margin: 0 0 10px 0; }
+        .s5 { margin: 5px 0; }
+        .s6 { margin: 0; padding-left: 20px; }
+        .s7 { margin-bottom: 15px; }
+        .s8 { margin-left: 15px; }
+        .s9 { margin: 0; }
+        .s10 { margin: 5px 0; font-size: 12px; color: #666; }
     </style>
 </head>
 <body>
@@ -78,15 +88,15 @@
             x-model="newTask"
             @keyup.enter="addTask()"
             placeholder="Add a task..."
-            style="width: 70%;"
+            class="s1"
         >
         <button @click="addTask()">Add</button>
 
         <ul>
             <template x-for="(task, index) in tasks" :key="index">
-                <li style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0;">
+                <li class="s2">
                     <span x-text="task"></span>
-                    <button @click="removeTask(index)" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer;">Remove</button>
+                    <button @click="removeTask(index)" class="s3">Remove</button>
                 </li>
             </template>
         </ul>
@@ -107,9 +117,9 @@
         <h3>User Directory</h3>
         <template x-for="user in users" :key="user.id">
             <div class="card">
-                <h4 x-text="user.name" style="margin: 0 0 10px 0;"></h4>
-                <p style="margin: 5px 0;">Email: <span x-text="user.email"></span></p>
-                <p style="margin: 5px 0;">Role: <span x-text="user.role"></span></p>
+                <h4 x-text="user.name" class="s4"></h4>
+                <p class="s5">Email: <span x-text="user.email"></span></p>
+                <p class="s5">Role: <span x-text="user.role"></span></p>
             </div>
         </template>
     </div>
@@ -128,8 +138,8 @@
         <h3>Food Categories</h3>
         <template x-for="category in categories" :key="category.name">
             <div class="card">
-                <h4 x-text="category.name" style="margin: 0 0 10px 0;"></h4>
-                <ul style="margin: 0; padding-left: 20px;">
+                <h4 x-text="category.name" class="s4"></h4>
+                <ul class="s6">
                     <template x-for="item in category.items" :key="item">
                         <li x-text="item"></li>
                     </template>
@@ -165,7 +175,7 @@
         }
     }">
         <h3>Product Catalog</h3>
-        <div style="margin-bottom: 15px;">
+        <div class="s7">
             <label>
                 Filter:
                 <select x-model="filter">
@@ -174,7 +184,7 @@
                     <option value="Furniture">Furniture</option>
                 </select>
             </label>
-            <label style="margin-left: 15px;">
+            <label class="s8">
                 Sort by:
                 <select x-model="sortBy">
                     <option value="name">Name</option>
@@ -185,9 +195,9 @@
 
         <template x-for="product in filteredProducts" :key="product.name">
             <div class="card">
-                <h4 x-text="product.name" style="margin: 0;"></h4>
-                <p style="margin: 5px 0;">Price: $<span x-text="product.price"></span></p>
-                <p style="margin: 5px 0; font-size: 12px; color: #666;" x-text="product.category"></p>
+                <h4 x-text="product.name" class="s9"></h4>
+                <p class="s5">Price: $<span x-text="product.price"></span></p>
+                <p class="s10" x-text="product.category"></p>
             </div>
         </template>
     </div>
@@ -205,7 +215,7 @@
         <h3>Generated Items</h3>
         <template x-for="i in count" :key="i">
             <div class="card">
-                <p style="margin: 0;">Item #<span x-text="i"></span></p>
+                <p class="s9">Item #<span x-text="i"></span></p>
             </div>
         </template>
     </div>

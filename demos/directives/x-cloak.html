@@ -6,7 +6,7 @@
     <title>x-cloak Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        [x-cloak] { display: none !important; }
+[x-cloak] { display: none !important; }
 
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
@@ -15,6 +15,13 @@
         .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
         .box { background: white; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { font-size: 12px; color: #666; }
+        .s2 { color: #e74c3c; }
+        .s3 { display: block; width: 100%; margin: 5px 0; padding: 8px; }
+        .s4 { display: block; margin: 10px 0; }
+        .s5 { margin-right: 10px; }
+        .s6 { background: #fff3cd; border-left-color: #ffc107; }
+        .s7 { background: white; padding: 10px; border-radius: 4px; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -31,7 +38,7 @@
             <p x-text="message"></p>
             <p>This content was hidden until Alpine initialized.</p>
         </div>
-        <p style="font-size: 12px; color: #666;">Without x-cloak, you might see "x-text=" flash before Alpine loads</p>
+        <p class="s1">Without x-cloak, you might see "x-text=" flash before Alpine loads</p>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-cloak keeps the element hidden until Alpine removes the attribute after initialization.
@@ -41,7 +48,7 @@
     <div class="demo">
         <div class="box" x-data="{ count: 0 }">
             <p>Count: <span x-text="count"></span></p>
-            <p style="color: #e74c3c;">Notice: Without x-cloak, x-text="count" might briefly appear before Alpine loads on slow connections</p>
+            <p class="s2">Notice: Without x-cloak, x-text="count" might briefly appear before Alpine loads on slow connections</p>
         </div>
     </div>
     <div class="explanation">
@@ -156,14 +163,14 @@
     }">
         <div class="box" x-cloak>
             <h4>User Profile Form</h4>
-            <input type="text" x-model="form.name" placeholder="Name" style="display: block; width: 100%; margin: 5px 0; padding: 8px;">
-            <input type="email" x-model="form.email" placeholder="Email" style="display: block; width: 100%; margin: 5px 0; padding: 8px;">
-            <select x-model="form.country" style="display: block; width: 100%; margin: 5px 0; padding: 8px;">
+            <input type="text" x-model="form.name" placeholder="Name" class="s3">
+            <input type="email" x-model="form.email" placeholder="Email" class="s3">
+            <select x-model="form.country" class="s3">
                 <option value="US">United States</option>
                 <option value="UK">United Kingdom</option>
                 <option value="CA">Canada</option>
             </select>
-            <label style="display: block; margin: 10px 0;">
+            <label class="s4">
                 <input type="checkbox" x-model="form.newsletter">
                 Subscribe to newsletter
             </label>
@@ -183,7 +190,7 @@
         <div x-data="{ items: ['A', 'B', 'C'] }" x-cloak class="box">
             <h4>List</h4>
             <template x-for="item in items" :key="item">
-                <span x-text="item" style="margin-right: 10px;"></span>
+                <span x-text="item" class="s5"></span>
             </template>
         </div>
 
@@ -197,10 +204,10 @@
         <strong>Explanation:</strong> Apply x-cloak to each component that needs to hide initialization. Each component unhides independently after its data loads.
     </div>
 
-    <div class="explanation" style="background: #fff3cd; border-left-color: #ffc107;">
+    <div class="explanation s6" >
         <strong>Important Setup:</strong>
         <p>x-cloak requires CSS in your stylesheet:</p>
-        <pre style="background: white; padding: 10px; border-radius: 4px; margin: 10px 0;">[x-cloak] { display: none !important; }</pre>
+        <pre class="s7">[x-cloak] { display: none !important; }</pre>
         <p>This CSS is already included in this demo page's &lt;style&gt; tag.</p>
     </div>
 

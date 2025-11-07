@@ -6,7 +6,7 @@
     <title>x-effect Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -15,6 +15,10 @@
         input { padding: 8px; margin: 5px; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
         .log { background: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 4px; max-height: 150px; overflow-y: auto; margin: 10px 0; font-family: monospace; font-size: 12px; }
+        .s1 { font-size: 12px; color: #666; }
+        .s2 { background: white; padding: 15px; margin: 15px 0; border-radius: 4px; }
+        .s3 { background: #fff3cd; padding: 15px; margin: 15px 0; border-radius: 4px; }
+        .s4 { margin: 15px 0; }
     </style>
 </head>
 <body>
@@ -89,7 +93,7 @@
             <p>Preview: This text reflects your preferences!</p>
         </div>
 
-        <p style="font-size: 12px; color: #666;">Reload the page - your preferences are saved!</p>
+        <p class="s1">Reload the page - your preferences are saved!</p>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> Multiple x-effect directives can be used. Each saves its dependency to localStorage automatically when it changes.
@@ -115,7 +119,7 @@
             <input type="number" x-model.number="height" min="1">
         </label>
 
-        <div style="background: white; padding: 15px; margin: 15px 0; border-radius: 4px;">
+        <div class="s2">
             <p>Area: <span x-text="area"></span> square units</p>
             <p>Perimeter: <span x-text="perimeter"></span> units</p>
         </div>
@@ -155,14 +159,14 @@
 
         <div x-show="loading">Loading...</div>
 
-        <div x-show="!loading && user" style="background: white; padding: 15px; margin: 15px 0; border-radius: 4px;">
+        <div x-show="!loading && user" class="s2">
             <h4 x-text="user?.name"></h4>
             <p>Email: <span x-text="user?.email"></span></p>
             <p>Phone: <span x-text="user?.phone"></span></p>
             <p>Website: <span x-text="user?.website"></span></p>
         </div>
 
-        <p style="font-size: 12px; color: #666;">API calls made: <span x-text="fetchCount"></span></p>
+        <p class="s1">API calls made: <span x-text="fetchCount"></span></p>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-effect can trigger API calls when dependencies change. The fetch runs automatically when userId changes.
@@ -181,7 +185,7 @@
         <input type="text" x-model="lastName" placeholder="Last Name">
         <input type="number" x-model.number="age" placeholder="Age">
 
-        <div style="background: #fff3cd; padding: 15px; margin: 15px 0; border-radius: 4px;">
+        <div class="s3">
             <strong>Open your browser console (F12) to see x-effect logging!</strong>
         </div>
     </div>
@@ -203,13 +207,13 @@
         <button @click="counter++">Increment Counter</button>
         <button @click="counter = 0">Reset Counter</button>
 
-        <div style="margin: 15px 0;">
+        <div class="s4">
             <p>Counter: <span x-text="counter"></span></p>
             <p>Effect runs: <span x-text="effectRuns"></span></p>
             <p>Effect enabled: <span x-text="enabled ? 'Yes' : 'No'"></span></p>
         </div>
 
-        <p style="font-size: 12px; color: #666;">When disabled, changing counter won't trigger the effect</p>
+        <p class="s1">When disabled, changing counter won't trigger the effect</p>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-effect can contain conditional logic. The effect only executes its side effects when the condition is true, but still tracks all dependencies.

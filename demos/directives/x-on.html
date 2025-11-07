@@ -6,7 +6,7 @@
     <title>x-on Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -15,6 +15,8 @@
         input { padding: 8px; margin: 5px; width: 200px; }
         .box { padding: 20px; margin: 10px 0; border: 2px solid #ddd; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { width: 100%; padding: 10px; }
+        .s2 { padding: 20px; background: #f0f0f0; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -47,7 +49,7 @@
             @input="charCount = $event.target.value.length"
             @keyup="text = $event.target.value"
             placeholder="Type something..."
-            style="width: 100%; padding: 10px;"
+            class="s1"
         >
         <p>Text: <span x-text="text"></span></p>
         <p>Character count: <span x-text="charCount"></span></p>
@@ -68,7 +70,7 @@
             @keyup.ctrl.s="log.push('Ctrl+S pressed'); $event.preventDefault()"
             @keyup.shift.a="log.push('Shift+A pressed')"
             placeholder="Press Enter, Escape, Ctrl+S, or Shift+A"
-            style="width: 100%; padding: 10px;"
+            class="s1"
         >
         <h4>Event Log:</h4>
         <ul style="max-height: 150px; overflow-y: auto;">
@@ -123,7 +125,7 @@
             Prevent Default
         </button>
 
-        <div @click="logs.push('Outer div clicked')" style="padding: 20px; background: #f0f0f0; margin: 10px 0;">
+        <div @click="logs.push('Outer div clicked')" class="s2">
             Outer Div
             <button @click.stop="logs.push('Button clicked (stopped propagation)')">
                 Stop Propagation

@@ -6,7 +6,7 @@
     <title>x-text Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -14,6 +14,9 @@
         button { padding: 10px 20px; margin: 5px; cursor: pointer; }
         input { padding: 8px; margin: 5px; width: 300px; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { width: 100%; }
+        .s2 { background: #fff; padding: 10px; border: 1px solid #ddd; }
+        .s3 { margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -65,7 +68,7 @@
         <p>Grade: <span x-text="getGrade()"></span></p>
         <p>Status: <span x-text="score >= 60 ? 'Pass' : 'Fail'"></span></p>
 
-        <input type="range" x-model.number="score" min="0" max="100" style="width: 100%;">
+        <input type="range" x-model.number="score" min="0" max="100" class="s1">
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-text can use ternary operators and call methods. The text updates as you adjust the slider.
@@ -73,7 +76,7 @@
 
     <h2>Example 4: String Manipulation</h2>
     <div class="demo" x-data="{ text: 'hello world' }">
-        <input type="text" x-model="text" placeholder="Enter text" style="width: 100%;">
+        <input type="text" x-model="text" placeholder="Enter text" class="s1">
 
         <p>Original: <span x-text="text"></span></p>
         <p>Uppercase: <span x-text="text.toUpperCase()"></span></p>
@@ -105,11 +108,11 @@
     <h2>Example 6: HTML Safety (Escaping)</h2>
     <div class="demo" x-data="{ userInput: '<script>alert(\"XSS\")</script><b>Bold text</b>' }">
         <p>User Input (with x-text - safe):</p>
-        <div style="background: #fff; padding: 10px; border: 1px solid #ddd;" x-text="userInput"></div>
+        <div class="s2" x-text="userInput"></div>
 
-        <p style="margin-top: 20px;">The HTML tags are escaped and shown as text, not executed. This prevents XSS attacks.</p>
+        <p class="s3">The HTML tags are escaped and shown as text, not executed. This prevents XSS attacks.</p>
 
-        <input type="text" x-model="userInput" placeholder="Try entering HTML" style="width: 100%;">
+        <input type="text" x-model="userInput" placeholder="Try entering HTML" class="s1">
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> x-text automatically escapes HTML, making it safe to display user input. HTML tags appear as text, not rendered HTML.

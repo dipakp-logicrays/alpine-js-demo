@@ -6,13 +6,15 @@
     <title>x-ignore Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
         .explanation { background: #e3f2fd; padding: 15px; margin: 10px 0; border-left: 4px solid #2196f3; }
         .box { background: white; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .s2 { margin: 0 15px; font-size: 20px; }
     </style>
 </head>
 <body>
@@ -107,7 +109,7 @@
     <div class="demo">
         <div class="box" x-ignore>
             <h4>Code Example (Not Processed)</h4>
-            <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>&lt;!-- Alpine.js Counter Example --&gt;
+            <pre class="s1"><code>&lt;!-- Alpine.js Counter Example --&gt;
 &lt;div x-data="{ count: 0 }"&gt;
     &lt;button @click="count++"&gt;+&lt;/button&gt;
     &lt;span x-text="count"&gt;&lt;/span&gt;
@@ -119,7 +121,7 @@
             <h4>Live Demo (Processed)</h4>
             <div x-data="{ count: 0 }">
                 <button @click="count++">+</button>
-                <span x-text="count" style="margin: 0 15px; font-size: 20px;"></span>
+                <span x-text="count" class="s2"></span>
                 <button @click="count--">-</button>
             </div>
         </div>

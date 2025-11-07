@@ -6,7 +6,7 @@
     <title>$watch Magic Demo</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
         .demo { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
         h1 { color: #333; }
         h2 { color: #666; margin-top: 30px; }
@@ -15,6 +15,10 @@
         input { padding: 8px; margin: 5px; }
         .log { background: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 4px; max-height: 150px; overflow-y: auto; margin: 10px 0; font-family: monospace; font-size: 12px; }
         a { display: inline-block; margin-top: 20px; color: #2196f3; }
+        .s1 { width: 100%; padding: 10px; }
+        .s2 { display: block; width: 100%; margin: 10px 0; padding: 8px; }
+        .s3 { color: red; margin: 0; }
+        .s4 { width: 100%; }
     </style>
 </head>
 <body>
@@ -78,7 +82,7 @@
         });
         content = localStorage.getItem('autosave') || content;
     ">
-        <textarea x-model="content" rows="5" style="width: 100%; padding: 10px;"></textarea>
+        <textarea x-model="content" rows="5" class="s1"></textarea>
         <p>Status: <span x-text="saveStatus"></span></p>
         <p x-show="lastSaved">Last saved: <span x-text="lastSaved"></span></p>
     </div>
@@ -104,11 +108,11 @@
                 : '';
         });
     ">
-        <input type="email" x-model="email" placeholder="Email" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
-        <p x-show="emailError" style="color: red; margin: 0;" x-text="emailError"></p>
+        <input type="email" x-model="email" placeholder="Email" class="s2">
+        <p x-show="emailError" class="s3" x-text="emailError"></p>
 
-        <input type="password" x-model="password" placeholder="Password" style="display: block; width: 100%; margin: 10px 0; padding: 8px;">
-        <p x-show="passwordError" style="color: red; margin: 0;" x-text="passwordError"></p>
+        <input type="password" x-model="password" placeholder="Password" class="s2">
+        <p x-show="passwordError" class="s3" x-text="passwordError"></p>
     </div>
     <div class="explanation">
         <strong>Explanation:</strong> Watch validates fields in real-time as user types. Error messages update automatically.
@@ -156,7 +160,7 @@
             if (alerts.length > 5) alerts.shift();
         });
     ">
-        <input type="range" x-model.number="temperature" min="0" max="50" style="width: 100%;">
+        <input type="range" x-model.number="temperature" min="0" max="50" class="s4">
         <p>Temperature: <span x-text="temperature"></span>°C</p>
 
         <h4>Alerts:</h4>
@@ -221,7 +225,7 @@
             }, 500);
         });
     ">
-        <input type="text" x-model="search" placeholder="Search users (min 3 chars)" style="width: 100%; padding: 10px;">
+        <input type="text" x-model="search" placeholder="Search users (min 3 chars)" class="s1">
 
         <p x-show="loading">Searching...</p>
 
